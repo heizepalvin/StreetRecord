@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_below="@+id/musicInfoArtist"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#0c021a"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/musicInfoTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:ellipsize="marquee"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="Why Don`t You Know (Feat. 넉살)"
+            android:textColor="#fff"
+            android:textSize="25sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="30dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Artist"
+                android:textColor="#fff"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/musicInfoArtist"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:ellipsize="marquee"
+                android:gravity="left|center"
+                android:paddingLeft="40dp"
+                android:singleLine="true"
+                android:text="청하"
+                android:textColor="#fff"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView18"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Album"
+                android:textColor="#fff"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/musicInfoAlbumName"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:ellipsize="marquee"
+                android:paddingLeft="40dp"
+                android:singleLine="true"
+                android:text="Hands on Me"
+                android:textColor="#fff"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView20"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="발매일"
+                android:textColor="#fff"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/musicInfoDate"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:paddingLeft="40dp"
+                android:text="2017.06.17"
+                android:textColor="#fff"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView22"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="장르"
+                android:textColor="#fff"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/musicInfoGenre"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:paddingLeft="40dp"
+                android:text="Dance"
+                android:textColor="#fff"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView23"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:gravity="center"
+            android:text="가사"
+            android:textColor="#fff"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/musicInfoLyrics"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:elevation="0dp"
+            android:gravity="center"
+            android:lineSpacingExtra="5sp"
+            android:text="내 맘이 안 보일까 봐 close to me\n진짜로 모르는 걸까 never\n두근두근 대체 왜 이래\nWhy don't you know\n여전히 세상은 늙고\n사랑은 아직 어려\n마음을 전해도 닿기에는 아직 어려워\n시간이 지난 뒤에 후회해 손해는 너\nAh 미리 말해두지만\n나만이 너의 파일럿\n아침엔 너가 좋아하는 색을 입어\n우연을 가장한 인연을 난 믿어\n싫다고 해 신경 안 써 never give up\n별들이 떨어져 어서 소원 빌어\n나를 특별하게 만들어\nYou make me feel better babe\n누구보다 잘 아는 것처럼\n계속 널 그리다 잠들어\n너무 깊게 빠져 babe\n바보 같을지 모르지만\n자꾸만 아니라고 말을 하네요\n난 맞는데 넌 왜 넌 난 맞는데 왜 넌\n사랑이 아니라고 말을 하네요\n내 맘인데 넌 왜 넌 내 맘인데 왜\nWhy don't you know\n아무것도 모르는 너\n아무것도 모르면서\n내 맘을 아는 것처럼\nI just wanna be your girl\n자꾸만 아니라고 말을 하네요\n난 맞는데 넌 왜 넌 난 맞는데 왜 넌\n사랑이 아니라고 말을 하네요\n내 맘인데 넌 왜 넌 내 맘인데 왜\nWhy don't you know\nWhy don't you know\nWhy don't you know\n"
+            android:textColor="#fff"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+    <!--<RelativeLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:background="#0c021a">-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/musicInfoTitle"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:ellipsize="marquee"-->
+            <!--android:singleLine="true"-->
+            <!--android:text="Why Don`t You Know (Feat. 넉살)"-->
+            <!--android:textColor="#fff"-->
+            <!--android:textSize="25sp" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/musicInfoArtist"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:layout_alignStart="@+id/musicInfoTitle"-->
+            <!--android:layout_below="@+id/musicInfoTitle"-->
+            <!--android:layout_marginTop="20dp"-->
+            <!--android:text="Artist"-->
+            <!--android:textColor="#fff"-->
+            <!--android:textSize="20sp" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/textView12"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Album"-->
+            <!--android:textColor="#fff"-->
+            <!--android:textSize="20sp"-->
+            <!--android:layout_below="@id/musicInfoArtist"/>-->
+
+    </android.support.v4.widget.NestedScrollView>
+
