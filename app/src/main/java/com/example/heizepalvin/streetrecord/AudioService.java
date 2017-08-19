@@ -1,8 +1,10 @@
 package com.example.heizepalvin.streetrecord;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ProviderInfo;
 import android.media.AudioManager;
@@ -90,9 +92,42 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
         }
     }
 
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if(intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)){
+                int state = intent.getIntExtra("state",-1);
+                switch (state){
+                    case 0:
+                        Log.e("헤드폰", String.valueOf(state) + " 헤드셋 빠짐");
+                        GlobalApplication.getInstance().getServiceInterface().pause();
+                        removeNotificationPlayer();
+                        break;
+                    case 1:
+                        Log.e("헤드폰", String.valueOf(state) + " 헤드셋 껴짐");
+                        break;
+                }
+            }
+        }
+    };
+
+    public void registerBroadcast(){
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_HEADSET_PLUG);
+        registerReceiver(mBroadcastReceiver,filter);
+    }
+
+    public void unregisterBroadcast(){
+        unregisterReceiver(mBroadcastReceiver);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
+
+        registerBroadcast();
+
         Log.e("서비스 들어오나?","서비스");
         items = new ArrayList<>();
         mediaPlayer = new MediaPlayer();
@@ -247,6 +282,7 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
             mediaPlayer.stop();
             mediaPlayer.release();
             mediaPlayer = null;
+            unregisterBroadcast();
             Log.e("여기가 들어오는건지?","오디오서비스디스트로이");
         }
     }
@@ -347,6 +383,7 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
 
     public void pause(){
         if(isPrepared){
+            Log.e("펄스 오디오","펄스");
             mediaPlayer.pause();
             sendBroadcast(new Intent(BroadcastActions.PLAY_STATE_CHANGED));
             updateNotificationPlayer();

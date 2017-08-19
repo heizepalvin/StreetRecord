@@ -93,57 +93,6 @@ super.onCreate(savedInstanceState);
         if(!getLink.equals("null")){
             infoLink.setText(getLink);
         }
-//        final SharedPreferences pref2 = getSharedPreferences("userInfo",MODE_PRIVATE);
-//        final Boolean infoBoolean =  pref2.getBoolean("userLoginInfo",false);
-//        if(infoBoolean){
-//            Log.e("뭐지 진짜","1");
-//            String userName = pref2.getString("saveName","");
-//            String userEmail = pref2.getString("saveEmail","");
-//            String userBirthday = pref2.getString("saveBirthday","");
-//            String loginLink = pref2.getString("saveLink","");
-//
-//            if(!userName.equals("")){
-//                infoName.setText(userName);
-//            }
-//            if(!userEmail.equals("")){
-//                infoEmail.setText(userEmail);
-//            }
-//            if(!userBirthday.equals("")){
-//                infoBirth.setText(userBirthday);
-//                infoBirthBtn.setVisibility(View.GONE);
-//            }
-//            if(!loginLink.equals("")){
-//                infoLink.setText(loginLink);
-//            }
-//        } else {
-//            Log.e("뭐지 진짜","2");
-//            final SharedPreferences pref = getSharedPreferences("login",MODE_PRIVATE);
-//            String userName = pref.getString("userName","");
-//            String userEmail = pref.getString("userEmail","");
-//            final String userBirthday = pref.getString("userBirthday","");
-//            String loginLink = pref.getString("loginLink","");
-//
-//            if(!userName.equals("")){
-//                infoName.setText(userName);
-//            }
-//            if(!userEmail.equals("")){
-//                infoEmail.setText(userEmail);
-//                infoEmailBtn.setVisibility(View.GONE);
-//            }
-//            if(!userBirthday.equals("")){
-//                String birth[]= userBirthday.split("/");
-//                infoBirth.setText(birth[2]+birth[0]+birth[1]);
-//                infoBirthBtn.setVisibility(View.GONE);
-//            }
-//            if(!loginLink.equals("")){
-//                infoLink.setText(loginLink);
-//            }
-//        }
-//
-
-
-
-
 
         infoEmailBtn.setOnClickListener(new View.OnClickListener() {
             @Override

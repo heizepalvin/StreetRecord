@@ -102,7 +102,7 @@ public class AudioServiceInterface {
 
     public void pause(){
         if(mService != null){
-            mService.play();
+            mService.pause();
         }
     }
 

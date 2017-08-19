@@ -114,7 +114,8 @@ public class MainActivity extends AppCompatActivity {
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e("리시브",intent.getAction());
+            Log.e("리시브", intent.getAction());
+            Log.e("HEADSET_PLUG", String.valueOf(intent.getIntExtra("state",0)));
 //            if(intent.getAction().equals("NEXT")){
 //                GlobalApplication.getInstance().getServiceInterface().forward();
 //                updateUI();
@@ -133,9 +134,23 @@ public class MainActivity extends AppCompatActivity {
                     GlobalApplication.getInstance().getServiceInterface().forward();
                     updateUI();
                 }
-            } else {
+            } else if(intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)){
+                int state = intent.getIntExtra("state",-1);
+                switch (state){
+                    case 0:
+                        Log.e("헤드폰", String.valueOf(state) + " 헤드셋 빠짐");
+                        GlobalApplication.getInstance().getServiceInterface().pause();
+                        updateUI();
+                        break;
+                    case 1:
+                        Log.e("헤드폰", String.valueOf(state) + " 헤드셋 껴짐");
+                        break;
+                }
+            }
+            else {
                 updateUI();
             }
+
         }
     };
 
