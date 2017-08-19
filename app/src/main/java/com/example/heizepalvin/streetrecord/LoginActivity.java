@@ -43,6 +43,7 @@ import com.kakao.usermgmt.callback.MeResponseCallback;
 import com.kakao.usermgmt.response.model.UserProfile;
 import com.kakao.util.exception.KakaoException;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -50,6 +51,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -75,6 +77,11 @@ public class LoginActivity extends AppCompatActivity {
     private Button fakeFacebook;
     private Button fakeKakao;
     private com.kakao.usermgmt.LoginButton kakaoLogin;
+
+
+    private String facebookParamsEmail;
+    private String facebookParamsBirth;
+    private String facebookUserInfo;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -165,7 +172,7 @@ public class LoginActivity extends AppCompatActivity {
 
         callbackManager = CallbackManager.Factory.create();
         facebookLogin = (LoginButton) findViewById(R.id.loginActFacebook);
-        facebookLogin.setReadPermissions("public_profile","user_friends","email");
+        facebookLogin.setReadPermissions("public_profile","user_friends","email","user_birthday");
         facebookLogin.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -180,20 +187,54 @@ public class LoginActivity extends AppCompatActivity {
                             SharedPreferences.Editor editor = pref.edit();
                             editor.putBoolean("login",true);
                             editor.putString("userName",object.getString("name"));
-                            editor.commit();
+                            editor.putString("token",object.getString("id"));
                             Log.e("name",object.getString("name"));
                             Log.e("user profile",object.toString());
+                            Log.e("user아이디",object.getString("id"));
+                            if(!object.toString().contains("email")){
+                                Log.e("facebookLoginUserEmail","이메일이 없음");
+                                facebookParamsEmail = null;
+                            } else{
+                                Log.e("facebookLoginUserEmail","이메일이 있음");
+//                                editor.putString("userEmail",object.getString("email"));
+                                facebookParamsEmail = object.getString("email");
+                            }
+
+                            if(!object.toString().contains("birthday")){
+                                Log.e("facebookLoginUserBirthday","생년월일이 없음");
+                                facebookParamsBirth = null;
+                            } else {
+                                Log.e("facebookLoginUserBirthday","생년월일이 있음");
+//                                editor.putString("userBirthday",object.getString("birthday"));
+                                String birthSplit[] = object.getString("birthday").split("/");
+                                facebookParamsBirth = birthSplit[2] + birthSplit[0] + birthSplit[1];
+                            }
+                            editor.putString("loginLink","Facebook");
+                            SharedPreferences pref2 = getSharedPreferences("facebook",MODE_PRIVATE);
+                            Boolean facebookLogin = pref2.getBoolean("facebookLogin",false);
+                            if(!facebookLogin){
+                                memberLoginFaceBook fbLogin = new memberLoginFaceBook();
+                                fbLogin.execute(object.getString("name"),"Facebook",object.getString("id"));
+                            } else {
+                                Toast.makeText(LoginActivity.this, "페이스북으로 로그인 되었습니다.", Toast.LENGTH_SHORT).show();
+                            }
                             loginBoolean = true;
+                            editor.commit();
                             Intent intent = new Intent(LoginActivity.this,MainActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
                             finish();
+
+                            Bundle facebookData = getFacebookData(object);
 
                         } catch (Exception e){
                             e.printStackTrace();
                         }
                     }
                 });
+                Bundle parameters = new Bundle();
+                parameters.putString("fields","id, name, email, gender, birthday");
+                request.setParameters(parameters);
                 request.executeAsync();
 
 
@@ -212,6 +253,39 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
+    }
+
+    private Bundle getFacebookData(JSONObject object){
+
+        try{
+            Bundle bundle = new Bundle();
+            String id = object.getString("id");
+            try{
+                URL profile_pic = new URL("https://graph.facebook.com/"+id+"/picture?width=200&height=150");
+                bundle.putString("profile_pic",profile_pic.toString());
+            }catch (MalformedURLException e){
+                e.printStackTrace();
+                return null;
+            }
+
+            bundle.putString("idFacebook",id);
+            if(object.has("email")){
+                bundle.putString("email",object.getString("email"));
+            }
+            if(object.has("gender")){
+                bundle.putString("gender",object.getString("gender"));
+            }
+            if(object.has("birthday")){
+                bundle.putString("birthday",object.getString("birthday"));
+            }
+            if(object.has("name")){
+                bundle.putString("name",object.getString("name"));
+            }
+            return bundle;
+        } catch (JSONException e){
+            Log.e("json","Error parsing JSON");
+        }
+        return null;
     }
 
 
@@ -251,8 +325,21 @@ public class LoginActivity extends AppCompatActivity {
                     SharedPreferences.Editor editor = pref.edit();
                     editor.putBoolean("login",true);
                     editor.putString("userName",result.getNickname());
+                    editor.putString("token", String.valueOf(result.getId()));
+//                    editor.putString("userEmail",result.getEmail());
+                    editor.putString("loginLink","KakaoTalk");
                     editor.commit();
+                    SharedPreferences pref2 = getSharedPreferences("kakao",MODE_PRIVATE);
+                    Boolean kakaoLogin = pref2.getBoolean("kakaoLogin",false);
+                    if(!kakaoLogin) {
+                        memberLoginKakao kakaoLoginDB = new memberLoginKakao();
+                        kakaoLoginDB.execute(result.getNickname(), result.getEmail(), "KAKAO", String.valueOf(result.getId()));
+                    } else {
+                        Toast.makeText(LoginActivity.this, "카카오톡으로 로그인 되었습니다.", Toast.LENGTH_SHORT).show();
+                    }
                     Log.e("UserProfile", result.toString());
+                    Log.e("UserEmail", result.getEmail());
+                    Log.e("UserID", String.valueOf(result.getId()));
                     loginBoolean = true;
                     Intent intent = new Intent(LoginActivity.this,MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -356,7 +443,179 @@ public class LoginActivity extends AppCompatActivity {
                 return null;
             }
 
+        }
+    }
 
+    //카카오톡 로그인 db연동
+
+    private class memberLoginKakao extends AsyncTask<String, Void, String>{
+
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+
+            if(s != null){
+                if(s.equals("카카오톡으로 로그인 되었습니다.")){
+                    Toast.makeText(LoginActivity.this, s, Toast.LENGTH_SHORT).show();
+                    SharedPreferences pref = getSharedPreferences("kakao",MODE_PRIVATE);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putBoolean("kakaoLogin",true);
+                    editor.commit();
+                }
+            }
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            String serverURL = "http://115.71.232.155/login/loginKakao.php";
+
+            try{
+
+                URL url = new URL(serverURL);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setReadTimeout(5000);
+                conn.setConnectTimeout(5000);
+                conn.setDoInput(true);
+                conn.connect();
+
+                String userName = params[0];
+                String userEmail = params[1];
+                String userLink = params[2];
+                String userToken = params[3];
+
+                String userInfo = "userName="+userName+"&userEmail="+userEmail+"&userLink="+userLink+"&userToken="+userToken;
+                OutputStream outputStream = conn.getOutputStream();
+                outputStream.write(userInfo.getBytes("UTF-8"));
+                outputStream.flush();
+                outputStream.close();
+
+                int responseCode = conn.getResponseCode();
+                InputStream inputStream;
+
+                if(responseCode == conn.HTTP_OK){
+                    inputStream = conn.getInputStream();
+                } else {
+                    inputStream = conn.getErrorStream();
+                }
+
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream,"UTF-8");
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                StringBuilder sb = new StringBuilder();
+                String line;
+
+                while ((line=bufferedReader.readLine())!= null){
+                    sb.append(line+"\n");
+                }
+                bufferedReader.close();
+
+                return sb.toString().trim();
+
+
+
+            }catch (Exception e){
+
+                Log.e("LoginActivity","Login Exception : " + e);
+                return null;
+            }
+        }
+    }
+
+    //페이스북 로그인 db연동
+
+    private class memberLoginFaceBook extends AsyncTask<String, Void, String>{
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            if(s!= null){
+                if(s.equals("페이스북으로 로그인 되었습니다.")){
+                    Toast.makeText(LoginActivity.this, s, Toast.LENGTH_SHORT).show();
+                    SharedPreferences pref = getSharedPreferences("facebook",MODE_PRIVATE);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putBoolean("facebookLogin",true);
+                    editor.commit();
+                }
+            }
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            String serverURL = "http://115.71.232.155/login/loginFacebook.php";
+
+            try{
+                 URL url = new URL(serverURL);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setReadTimeout(5000);
+                conn.setConnectTimeout(5000);
+                conn.setDoInput(true);
+                conn.connect();
+
+                String userName = params[0];
+                String userLink = params[1];
+                String userToken = params[2];
+                if(!facebookParamsEmail.equals(null)){
+                    if(!facebookParamsBirth.equals(null)){
+                        facebookUserInfo = "userName="+userName+"&userEmail="+facebookParamsEmail+"&userBirth="+facebookParamsBirth+"&userLink="+userLink+"&userToken="+userToken;
+                    } else {
+                        facebookUserInfo = "userName="+userName+"&userEmail="+facebookParamsEmail+"&userLink="+userLink+"&userToken="+userToken;
+                    }
+                } else {
+                    if(!facebookParamsBirth.equals("null")){
+                        facebookUserInfo = "userName="+userName+"&userBirth="+facebookParamsBirth+"&userLink="+userLink+"&userToken="+userToken;
+                    } else {
+                        facebookUserInfo = "userName="+userName+"&userLink="+userLink+"&userToken="+userToken;
+                    }
+                }
+                OutputStream outputStream = conn.getOutputStream();
+                outputStream.write(facebookUserInfo.getBytes("UTF-8"));
+                outputStream.flush();
+                outputStream.close();
+
+                int responseCode = conn.getResponseCode();
+                InputStream inputStream;
+
+                if(responseCode == conn.HTTP_OK){
+                    inputStream = conn.getInputStream();
+                } else {
+                    inputStream = conn.getErrorStream();
+                }
+
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream,"UTF-8");
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                StringBuilder sb = new StringBuilder();
+                String line;
+
+                while ((line=bufferedReader.readLine())!=null){
+                    sb.append(line+"\n");
+                }
+                bufferedReader.close();
+
+                return sb.toString().trim();
+
+            } catch (Exception e){
+                Log.e("LoginActivity","facebookLogin Exception : " + e);
+                return null;
+            }
         }
     }
 

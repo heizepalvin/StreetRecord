@@ -129,6 +129,15 @@ public class PlaylistAdpater extends RecyclerView.Adapter<PlaylistViewHolder> im
                 GlobalApplication.getInstance().getServiceInterface().play(position);
             }
         });
+
+        holder.playlistItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GlobalApplication.getInstance().getServiceInterface().setPlaylist(items);
+                GlobalApplication.getInstance().getServiceInterface().play(position);
+            }
+        });
+
         holder.title.setText(items.get(position).getTitle());
         holder.artist.setText(items.get(position).getArtist());
         holder.reorder.setOnTouchListener(new View.OnTouchListener() {

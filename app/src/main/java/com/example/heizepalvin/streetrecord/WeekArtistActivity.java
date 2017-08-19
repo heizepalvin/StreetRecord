@@ -115,6 +115,21 @@ public class WeekArtistActivity extends AppCompatActivity {
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                     }
+                }  else if(position==0){
+                    SharedPreferences pref = getSharedPreferences("login",MODE_PRIVATE);
+                    Boolean loginSet = pref.getBoolean("login",false);
+                    String loginLink = pref.getString("loginLink","no");
+                    if(loginSet){
+                        if(loginLink.equals("no")){
+                            Intent intent = new Intent(WeekArtistActivity.this,MyinfoActivity.class);
+                            startActivity(intent);
+                        } else {
+                            Intent intent = new Intent(WeekArtistActivity.this,MyInfoLinkActivity.class);
+                            startActivity(intent);
+                        }
+                    } else {
+                        Toast.makeText(WeekArtistActivity.this, "로그인을 해주세요.", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });

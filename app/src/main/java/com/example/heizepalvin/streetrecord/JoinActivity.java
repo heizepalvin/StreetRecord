@@ -46,8 +46,8 @@ public class JoinActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.join_activity);
 
-        id = (EditText) findViewById(R.id.infoActID);
-        pwd = (EditText) findViewById(R.id.infoActPwd);
+        id = (EditText) findViewById(R.id.infoLinkActName);
+        pwd = (EditText) findViewById(R.id.infoLinkActEmailEdit);
         pwd2 = (EditText) findViewById(R.id.infoActPwd2);
         email = (EditText) findViewById(R.id.infoActEmail);
         birth = (EditText) findViewById(R.id.infoActBirth);
@@ -60,9 +60,14 @@ public class JoinActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(!hasFocus){
-                    IDConfirmData data = new IDConfirmData();
-                    String confirm = id.getText().toString();
-                    data.execute(confirm);
+                    if(id.getText().toString().replace(" ","").equals("")){
+                        idConfirm.setText("사용할 수 없는 ID입니다.");
+                        idConfirm.setTextColor(Color.RED);
+                    } else {
+                        IDConfirmData data = new IDConfirmData();
+                        String confirm = id.getText().toString();
+                        data.execute(confirm);
+                    }
                 }
             }
         });
@@ -188,7 +193,14 @@ public class JoinActivity extends AppCompatActivity {
                 } else if(emailConfirm.getText().toString().equals("이메일 형식이 맞지 않습니다.")){
                     Toast.makeText(JoinActivity.this, "이메일 형식을 확인해주세요.", Toast.LENGTH_SHORT).show();
                     email.requestFocus();
-                } else{
+                } else if(birth.getText().toString().length() != 8){
+                    Toast.makeText(JoinActivity.this, "생년월일을 정확히 입력해주세요.", Toast.LENGTH_SHORT).show();
+                    birth.requestFocus();
+                } else if(idConfirm.getText().toString().equals("사용할 수 없는 ID입니다.")){
+                    Toast.makeText(JoinActivity.this, "사용할 수 없는 ID입니다.", Toast.LENGTH_SHORT).show();
+                    id.requestFocus();
+                }
+                else{
                     joinMember join = new joinMember();
                     String memberID = id.getText().toString();
                     String memberPwd = pwd.getText().toString();

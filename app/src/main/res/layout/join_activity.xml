@@ -30,14 +30,14 @@
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:layout_alignEnd="@+id/textView5"
-        android:layout_alignTop="@+id/infoActID"
+        android:layout_alignTop="@+id/infoLinkActName"
         android:gravity="center"
         android:text="ID"
         android:textColor="#fff"
         android:textSize="15sp" />
 
     <EditText
-        android:id="@+id/infoActID"
+        android:id="@+id/infoLinkActName"
         android:layout_width="250dp"
         android:layout_height="50dp"
         android:layout_alignParentEnd="true"
@@ -56,8 +56,8 @@
         android:id="@+id/joinActIdConfirm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/infoActID"
-        android:layout_below="@+id/infoActID"
+        android:layout_alignStart="@+id/infoLinkActName"
+        android:layout_below="@+id/infoLinkActName"
         android:layout_marginTop="9dp"
         android:text="아이디를 입력해주세요."
         android:textColor="#B7F0B1"
@@ -78,20 +78,20 @@
         android:id="@+id/textView5"
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:layout_alignTop="@+id/infoActPwd"
+        android:layout_alignTop="@+id/infoLinkActEmailEdit"
         android:layout_marginEnd="6dp"
-        android:layout_toStartOf="@+id/infoActPwd"
+        android:layout_toStartOf="@+id/infoLinkActEmailEdit"
         android:gravity="center"
         android:text="비밀번호"
         android:textColor="#fff"
         android:textSize="15sp" />
 
     <EditText
-        android:id="@+id/infoActPwd"
+        android:id="@+id/infoLinkActEmailEdit"
         android:layout_width="250dp"
         android:layout_height="50dp"
-        android:layout_alignStart="@+id/infoActID"
-        android:layout_below="@+id/infoActID"
+        android:layout_alignStart="@+id/infoLinkActName"
+        android:layout_below="@+id/infoLinkActName"
         android:layout_marginTop="40dp"
         android:background="#0c021a"
         android:ems="10"
@@ -116,8 +116,8 @@
         android:id="@+id/infoActPwd2"
         android:layout_width="250dp"
         android:layout_height="50dp"
-        android:layout_alignStart="@+id/infoActPwd"
-        android:layout_below="@+id/infoActPwd"
+        android:layout_alignStart="@+id/infoLinkActEmailEdit"
+        android:layout_below="@+id/infoLinkActEmailEdit"
         android:layout_marginTop="40dp"
         android:background="#0c021a"
         android:ems="10"
@@ -152,12 +152,12 @@
         android:id="@+id/joinActEmailConfirm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/textView8"
-        android:layout_alignStart="@+id/infoActBirth"
         android:layout_marginBottom="9dp"
         android:text="이메일을 입력해주세요."
         android:textColor="#B7F0B1"
-        android:textSize="15sp" />
+        android:textSize="15sp"
+        android:layout_above="@+id/textView8"
+        android:layout_centerHorizontal="true" />
 
     <EditText
         android:id="@+id/infoActEmail"
@@ -193,9 +193,9 @@
         android:layout_marginTop="40dp"
         android:background="#0c021a"
         android:ems="10"
-        android:hint="6자리 ex) 930825"
+        android:hint="8자리 ex) 19930825"
         android:inputType="number"
-        android:maxLength="6"
+        android:maxLength="8"
         android:textColor="#abcddd"
         android:textColorHint="@android:color/darker_gray" />
 

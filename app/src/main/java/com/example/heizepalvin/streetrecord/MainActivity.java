@@ -30,6 +30,7 @@ import com.navdrawer.SimpleSideDrawer;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mozilla.javascript.tools.debugger.Main;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -201,13 +202,27 @@ public class MainActivity extends AppCompatActivity {
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                     }
+                } else if(position==0){
+                    SharedPreferences pref = getSharedPreferences("login",MODE_PRIVATE);
+                    Boolean loginSet = pref.getBoolean("login",false);
+                    String loginLink = pref.getString("loginLink","no");
+                    if(loginSet){
+                        if(loginLink.equals("no")){
+                            Intent intent = new Intent(MainActivity.this,MyinfoActivity.class);
+                            startActivity(intent);
+                        } else {
+                            Intent intent = new Intent(MainActivity.this,MyInfoLinkActivity.class);
+                            startActivity(intent);
+                        }
+                    } else {
+                        Toast.makeText(MainActivity.this, "로그인을 해주세요.", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
 
 
         //SlidingMenu 끝
-
 
 
         //NewMusic 시작
@@ -408,6 +423,7 @@ public class MainActivity extends AppCompatActivity {
         editor.clear();
         editor.commit();
 
+
     }
 
 
@@ -418,6 +434,7 @@ public class MainActivity extends AppCompatActivity {
         filter.addAction(BroadcastActions.NEXT);
         filter.addAction(BroadcastActions.PLAY_START);
         filter.addAction(BroadcastActions.isPlaying);
+        filter.addAction(Intent.ACTION_HEADSET_PLUG);
         registerReceiver(mBroadcastReceiver, filter);
     }
 
@@ -547,7 +564,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG,"musicURL ? " + musicURL);
                 String getLyrics = item.getString("lyrics");
                 String lyrics = getLyrics.replace("*","\n");
-                Log.e(TAG,"lyrics ? " + lyrics);
+//                Log.e(TAG,"lyrics ? " + lyrics);
                 String albumName = item.getString("albumName");
                 Log.e(TAG,"albumName ? " + albumName);
                 String date = item.getString("date");
@@ -673,15 +690,10 @@ public class MainActivity extends AppCompatActivity {
                 String albumImg = item.getString("albumImg");
                 Log.e("syllowa","albumImg ? "+albumImg);
                 String musicURL = item.getString("musicURL");
-                Log.e(TAG,"musicURL ? " + musicURL);
                 String lyrics = item.getString("lyrics");
-                Log.e(TAG,"musicURL ? " + musicURL);
                 String albumName = item.getString("albumName");
-                Log.e(TAG,"musicURL ? " + musicURL);
                 String date = item.getString("date");
-                Log.e(TAG,"musicURL ? " + musicURL);
                 String genre = item.getString("genre");
-                Log.e(TAG,"musicURL ? " + musicURL);
 
 
                 NewMusicList newMusicList = new NewMusicList(title,artist,albumImg,musicURL,lyrics,albumName,date,genre);

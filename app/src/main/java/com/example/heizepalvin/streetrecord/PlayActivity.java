@@ -10,6 +10,8 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -28,8 +30,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
+import java.util.Date;
 
 
 /**
@@ -65,6 +68,10 @@ public class PlayActivity extends AppCompatActivity {
 
     private String repeatMode;
 
+    private TextView playCurrentPosition;
+    private TextView playTotalPosition;
+
+    private Handler playPositionHandler;
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -74,9 +81,11 @@ public class PlayActivity extends AppCompatActivity {
                 Log.e("playActivity", "next에 들어옴");
                 updateUI();
             } else if(intent.getAction().equals("TRUE")){
+                Log.e("playActivity", "true에 들어옴");
                 updateProgress();
                 updateUI();
             } else if(intent.getAction().equals("REPEATOFF")){
+                Log.e("playActivity", "repeatoff에 들어옴");
                 updateProgress();
                 updateUI();
             } else {
@@ -119,6 +128,7 @@ public class PlayActivity extends AppCompatActivity {
                 String date = item.getDate();
                 String genre = item.getGenre();
                 String lyrics = item.getLyrics();
+                String lyricsPlay = lyrics.replace("*","\n");
 
                 intent.putExtra("title",title);
                 intent.putExtra("artist",artist);
@@ -126,7 +136,7 @@ public class PlayActivity extends AppCompatActivity {
                 intent.putExtra("albumName",albumName);
                 intent.putExtra("date", date);
                 intent.putExtra("genre", genre);
-                intent.putExtra("lyrics", lyrics);
+                intent.putExtra("lyrics", lyricsPlay);
 
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
@@ -204,6 +214,12 @@ public class PlayActivity extends AppCompatActivity {
 
         musicTitle.setSelected(true);
 
+
+        playCurrentPosition = (TextView) findViewById(R.id.playActCurrentPlay);
+        playTotalPosition = (TextView) findViewById(R.id.playActTotalPlaying);
+
+        updatePlayTime();
+
         registerBroadcast();
         updateUI();
 
@@ -219,6 +235,7 @@ public class PlayActivity extends AppCompatActivity {
 
         repeatOff.setOnClickListener(new View.OnClickListener() {
             @Override
+
             public void onClick(View v) {
                 repeatOff.setVisibility(View.GONE);
                 repeatOn.setVisibility(View.VISIBLE);
@@ -311,6 +328,21 @@ public class PlayActivity extends AppCompatActivity {
             randomOff.setVisibility(View.VISIBLE);
             randomOn.setVisibility(View.GONE);
         }
+
+        playPositionHandler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                SimpleDateFormat times = new SimpleDateFormat("mm:ss");
+                playCurrentPosition.setText(times.format(GlobalApplication.getInstance().getServiceInterface().getMusicPosition()));
+            }
+        };
+
+        if(!GlobalApplication.getInstance().getServiceInterface().isPlaying()){
+            SimpleDateFormat times = new SimpleDateFormat("mm:ss");
+            playCurrentPosition.setText(times.format(GlobalApplication.getInstance().getServiceInterface().getMusicPosition()));
+            seekBar.setProgress(GlobalApplication.getInstance().getServiceInterface().getMusicPosition());
+        }
     }
 
     private class ProgressUpdate extends Thread{
@@ -320,8 +352,11 @@ public class PlayActivity extends AppCompatActivity {
             Log.e("progressupdate",GlobalApplication.getInstance().getServiceInterface().isPlaying() + " ??");
             while (GlobalApplication.getInstance().getServiceInterface().isPlaying()){
                 try{
+                    Message msg = playPositionHandler.obtainMessage();
+                    playPositionHandler.sendMessage(msg);
                     seekBar.setProgress(GlobalApplication.getInstance().getServiceInterface().getMusicPosition());
                     Thread.sleep(1000);
+//                    Log.e("times",times.format(GlobalApplication.getInstance().getServiceInterface().getMusicPosition()));
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -369,10 +404,35 @@ public class PlayActivity extends AppCompatActivity {
             musicArtist.setText(musicItem.getArtist());
             Glide.with(this).load(musicItem.getImgPath()).into(musicAlbumImg);
         }
+
+        if(GlobalApplication.getInstance().getServiceInterface().isPlaying()){
+            updatePlayTime();
+        }
     }
 
     private void updateProgress(){
         seekBar.setProgress(0);
         seekBar.setMax(GlobalApplication.getInstance().getServiceInterface().getDuration());
+    }
+
+    private void updatePlayTime(){
+
+        int time = GlobalApplication.getInstance().getServiceInterface().getDuration();
+        int totalSeconds = time /1000;
+        int seconds = totalSeconds % 60;
+        int minutes = (totalSeconds /60) % 60;
+        if(minutes<10){
+            if(seconds<10){
+                playTotalPosition.setText("0"+minutes+":"+"0"+seconds);
+            } else{
+                playTotalPosition.setText("0"+minutes+":"+seconds);
+            }
+        } else {
+            if(seconds<10){
+                playTotalPosition.setText(minutes+":"+"0"+seconds);
+            } else {
+                playTotalPosition.setText(minutes+":"+seconds);
+            }
+        }
     }
 }

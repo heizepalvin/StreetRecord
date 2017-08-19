@@ -75,6 +75,12 @@
         <activity android:name=".MusicInfoActivity">
 
         </activity>
+        <activity android:name=".MyinfoActivity">
+
+        </activity>
+        <activity android:name=".MyInfoLinkActivity">
+
+        </activity>
     </application>
 
 </manifest>

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +52,7 @@ public class MusicGenreActivityAdapter extends BaseAdapter {
         public TextView artist;
         public ImageButton play;
         public ImageButton info;
+        public LinearLayout list;
     }
 
 
@@ -133,6 +135,7 @@ public class MusicGenreActivityAdapter extends BaseAdapter {
 
             }
         });
+
 
         holder.info.setOnClickListener(new View.OnClickListener() {
             @Override
