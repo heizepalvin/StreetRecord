@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_one"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_dialog_info"
+        android:title="HOME"
+        />
+    <item
+        android:id="@+id/action_two"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_dialog_info"
+        android:title="참여중인 채팅방"
+        />
+    <item
+        android:id="@+id/action_three"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_dialog_info"
+        android:title="친구목록"
+        />
+</menu>

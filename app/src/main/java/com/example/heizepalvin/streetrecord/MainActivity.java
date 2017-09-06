@@ -182,6 +182,16 @@ public class MainActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         setContentView(R.layout.activity_main);
 
+
+//        SharedPreferences preferences12 = getSharedPreferences("facebook",MODE_PRIVATE);
+//        SharedPreferences preferences13 = getSharedPreferences("kakao",MODE_PRIVATE);
+//        SharedPreferences.Editor editor12 = preferences12.edit();
+//        SharedPreferences.Editor editor13 = preferences13.edit();
+//        editor12.clear();
+//        editor13.clear();
+//        editor12.commit();
+//        editor13.commit();
+
         Stetho.initializeWithDefaults(this);
 
         mSlidingMenu = new SimpleSideDrawer(this);
@@ -198,8 +208,10 @@ public class MainActivity extends AppCompatActivity {
         menuData = new ArrayList<>();
         MenuItem myInfo = new MenuItem("내 정보",R.drawable.myinfo);
         MenuItem musicList = new MenuItem("플레이리스트",R.drawable.musiclist);
+        MenuItem musicContest = new MenuItem("MusicChat!",R.drawable.logoface);
         menuData.add(myInfo);
         menuData.add(musicList);
+        menuData.add(musicContest);
 
         ListView listView = (ListView) findViewById(R.id.menuList);
 
@@ -231,6 +243,13 @@ public class MainActivity extends AppCompatActivity {
                         }
                     } else {
                         Toast.makeText(MainActivity.this, "로그인을 해주세요.", Toast.LENGTH_SHORT).show();
+                    }
+                } else if(position==2){
+                    if(loginUser.getText().toString().equals("로그인을 해주세요.")){
+                        Toast.makeText(MainActivity.this, "로그인을 해주세요.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Intent intent = new Intent(MainActivity.this,MusicChatActivity.class);
+                        startActivity(intent);
                     }
                 }
             }

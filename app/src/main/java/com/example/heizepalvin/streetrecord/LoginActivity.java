@@ -84,12 +84,18 @@ public class LoginActivity extends AppCompatActivity {
     private String facebookUserInfo;
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Session.getCurrentSession().removeCallback(callback);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
 
         //카카오톡 해시키 생성
-//        try{
+//        try
 //            PackageInfo info = getPackageManager().getPackageInfo("com.example.heizepalvin.streetrecord", PackageManager.GET_SIGNATURES);
 //            for (Signature signature : info.signatures){
 //                MessageDigest md = MessageDigest.getInstance("SHA");
@@ -193,7 +199,7 @@ public class LoginActivity extends AppCompatActivity {
                             Log.e("user아이디",object.getString("id"));
                             if(!object.toString().contains("email")){
                                 Log.e("facebookLoginUserEmail","이메일이 없음");
-                                facebookParamsEmail = null;
+                                facebookParamsEmail = "null";
                             } else{
                                 Log.e("facebookLoginUserEmail","이메일이 있음");
 //                                editor.putString("userEmail",object.getString("email"));
@@ -202,7 +208,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             if(!object.toString().contains("birthday")){
                                 Log.e("facebookLoginUserBirthday","생년월일이 없음");
-                                facebookParamsBirth = null;
+                                facebookParamsBirth = "null";
                             } else {
                                 Log.e("facebookLoginUserBirthday","생년월일이 있음");
 //                                editor.putString("userBirthday",object.getString("birthday"));
@@ -215,8 +221,10 @@ public class LoginActivity extends AppCompatActivity {
                             if(!facebookLogin){
                                 memberLoginFaceBook fbLogin = new memberLoginFaceBook();
                                 fbLogin.execute(object.getString("name"),"Facebook",object.getString("id"));
+                                Log.e("페이스북로그인","페이스북로그인 false");
                             } else {
                                 Toast.makeText(LoginActivity.this, "페이스북으로 로그인 되었습니다.", Toast.LENGTH_SHORT).show();
+                                Log.e("페이스북로그인","페이스북로그인 true");
                             }
                             loginBoolean = true;
                             editor.commit();
@@ -321,6 +329,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onSuccess(UserProfile result) {
+                    Log.e("kakaoLogin","카카오로그인이에요123");
                     SharedPreferences pref = getSharedPreferences("login",MODE_PRIVATE);
                     SharedPreferences.Editor editor = pref.edit();
                     editor.putBoolean("login",true);
@@ -334,8 +343,10 @@ public class LoginActivity extends AppCompatActivity {
                     if(!kakaoLogin) {
                         memberLoginKakao kakaoLoginDB = new memberLoginKakao();
                         kakaoLoginDB.execute(result.getNickname(), result.getEmail(), "KAKAO", String.valueOf(result.getId()));
+                        Log.e("kakaoLogin","카카오로그인이에요");
                     } else {
                         Toast.makeText(LoginActivity.this, "카카오톡으로 로그인 되었습니다.", Toast.LENGTH_SHORT).show();
+                        Log.e("kakaoLogin","카카오로그인이에요2");
                     }
                     Log.e("UserProfile", result.toString());
                     Log.e("UserEmail", result.getEmail());
@@ -345,6 +356,7 @@ public class LoginActivity extends AppCompatActivity {
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                     finish();
+
                 }
             });
         }
@@ -388,6 +400,7 @@ public class LoginActivity extends AppCompatActivity {
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                     finish();
+
                 } else {
                     Toast.makeText(LoginActivity.this, result, Toast.LENGTH_SHORT).show();
                     idInput.requestFocus();
@@ -471,6 +484,7 @@ public class LoginActivity extends AppCompatActivity {
                     SharedPreferences.Editor editor = pref.edit();
                     editor.putBoolean("kakaoLogin",true);
                     editor.commit();
+
                 }
             }
         }
@@ -519,6 +533,8 @@ public class LoginActivity extends AppCompatActivity {
                     sb.append(line+"\n");
                 }
                 bufferedReader.close();
+
+                Log.e("카카오톡로그인연동",sb.toString().trim());
 
                 return sb.toString().trim();
 
@@ -573,8 +589,8 @@ public class LoginActivity extends AppCompatActivity {
                 String userName = params[0];
                 String userLink = params[1];
                 String userToken = params[2];
-                if(!facebookParamsEmail.equals(null)){
-                    if(!facebookParamsBirth.equals(null)){
+                if(!facebookParamsEmail.equals("null")){
+                    if(!facebookParamsBirth.equals("null")){
                         facebookUserInfo = "userName="+userName+"&userEmail="+facebookParamsEmail+"&userBirth="+facebookParamsBirth+"&userLink="+userLink+"&userToken="+userToken;
                     } else {
                         facebookUserInfo = "userName="+userName+"&userEmail="+facebookParamsEmail+"&userLink="+userLink+"&userToken="+userToken;
@@ -609,7 +625,7 @@ public class LoginActivity extends AppCompatActivity {
                     sb.append(line+"\n");
                 }
                 bufferedReader.close();
-
+                Log.e("memberLoginFacebook",sb.toString().trim());
                 return sb.toString().trim();
 
             } catch (Exception e){
