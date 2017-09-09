@@ -46,6 +46,8 @@ public class ChatingActivity extends AppCompatActivity {
 
     PrintWriter sendWriter;
 
+    private String sendString;
+
 
 //    public static ArrayList<String> chatlist = new ArrayList<>();
 
@@ -80,7 +82,7 @@ public class ChatingActivity extends AppCompatActivity {
 
         chatingInput = (EditText) findViewById(R.id.chatActInput);
         chatingSendBtn = (Button) findViewById(R.id.chatActSendBtn);
-        chatView = (TextView) findViewById(R.id.chatActView);
+//        chatView = (TextView) findViewById(R.id.chatActView);
 
 
 
@@ -95,19 +97,19 @@ public class ChatingActivity extends AppCompatActivity {
 //                    s_thread.setSocket(socket);
 //                    s_thread.setEditText(chatingInput);
 //                    s_thread.start();
-                    String sendString = chatingInput.getText().toString();
+                    sendString = chatingInput.getText().toString();
                     Log.e("보내려고하는 메시지는?",sendString);
                     if(!sendString.equals("")){
-                        sendWriter.println(sendString);
-                        sendWriter.flush();
+                        messageSend messageSend = new messageSend();
+                        messageSend.execute();
                         chatingInput.setText("");
                     }
 //                }
             }
         });
 
-        socketGet getso = new socketGet();
-        getso.execute();
+//        socketGet getso = new socketGet();
+//        getso.execute();
 
         chatingHandler = new Handler(){
             @Override
@@ -123,6 +125,37 @@ public class ChatingActivity extends AppCompatActivity {
             }
         };
 
+        ListView listView = (ListView) findViewById(R.id.chatActList);
+
+        ArrayList<ChatingItem> chatlist = new ArrayList();
+
+        for(int i = 0; i<10; i++){
+
+            ChatingItem item = new ChatingItem("하이하이하이" + i);
+            chatlist.add(item);
+
+        }
+
+
+        ChatingAdapter adapter = new ChatingAdapter(this,R.layout.chat_item,chatlist);
+
+        listView.setAdapter(adapter);
+
+
+
+
+    }
+
+    private class messageSend extends AsyncTask<String, Void, String>{
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            sendWriter.println(sendString);
+            sendWriter.flush();
+
+            return null;
+        }
     }
 
     private class socketGet extends AsyncTask<String,Void,String>{

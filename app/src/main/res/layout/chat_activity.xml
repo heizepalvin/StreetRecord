@@ -7,6 +7,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#fff"
         android:orientation="horizontal">
 
         <ImageView
@@ -18,7 +19,7 @@
             app:srcCompat="@drawable/back" />
 
         <TextView
-            android:id="@+id/textView21"
+            android:id="@+id/chatActTitle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -36,26 +37,31 @@
 
     </LinearLayout>
 
-    <!--<ListView-->
-        <!--android:id="@+id/chatActList"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_weight="1" />-->
-    <ScrollView
+    <ListView
+        android:id="@+id/chatActList"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="#fff"
+        android:divider="#fff"
+        android:dividerHeight="0dp"
+        android:listSelector="#fff" />
+    <!--<ScrollView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_weight="1">-->
 
-        <TextView
-            android:id="@+id/chatActView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </ScrollView>
+        <!--<TextView-->
+            <!--android:id="@+id/chatActView"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content" />-->
+    <!--</ScrollView>-->
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#fff"
         android:orientation="horizontal">
 
         <EditText

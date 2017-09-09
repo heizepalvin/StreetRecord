@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,10 +34,11 @@ public class MusicChatActivity extends AppCompatActivity {
     private LinearLayout createChatRoom;
     static ArrayList<MusicChatItem> chatItems = new ArrayList<>();;
     private BottomNavigationView navigationView;
-    private ViewPager vp;
+    public static ViewPager vp;
 
     private MenuItem prevBottomNavigation;
 
+    private pagerAdapter adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,7 +50,10 @@ public class MusicChatActivity extends AppCompatActivity {
 
         vp = (ViewPager) findViewById(R.id.musicChatActViewPager);
 
-        vp.setAdapter(new pagerAdapter(getSupportFragmentManager()));
+        adapter = new pagerAdapter(getSupportFragmentManager());
+        vp.setAdapter(adapter);
+
+
         vp.setCurrentItem(0);
 
         createChatRoom.setOnClickListener(new View.OnClickListener() {
@@ -58,6 +63,9 @@ public class MusicChatActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
+
 
 
         navigationView = (BottomNavigationView) findViewById(R.id.musicChatActBottom);
@@ -76,9 +84,9 @@ public class MusicChatActivity extends AppCompatActivity {
                     case R.id.action_two:
                         vp.setCurrentItem(1);
                         return true;
-                    case R.id.action_three:
-                        vp.setCurrentItem(2);
-                        return true;
+//                    case R.id.action_three:
+//                        vp.setCurrentItem(2);
+//                        return true;
                 }
                 return false;
             }
@@ -116,7 +124,7 @@ public class MusicChatActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-//        recyclerView.getAdapter().notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
     }
 
 
@@ -136,8 +144,8 @@ public class MusicChatActivity extends AppCompatActivity {
                     return new MusicChatActFragmentHome();
                 case 1:
                     return new MusicChatActFragmentRoomList();
-                case 2:
-                    return new MusicChatActFragmentFriendList();
+//                case 2:
+//                    return new MusicChatActFragmentFriendList();
                 default:
                     return null;
             }
@@ -145,10 +153,15 @@ public class MusicChatActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return 3;
+            return 2;
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+                return POSITION_NONE;
+            }
         }
     }
 
 
 
-}

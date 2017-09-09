@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/chatItemLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!--<View-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="1dp"-->
+    <!--android:id="@+id/userChatLeft"-->
+    <!--android:background="#888888"-->
+    <!--android:layout_weight="1"-->
+    <!--android:layout_margin="10dp"-->
+
+    <!--/>-->
+    <TextView
+        android:id="@+id/chatItemText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text=""
+        android:textColor="#000000"
+        android:background="@drawable/inbox2"
+        />
+
+    <!--<View-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="1dp"-->
+    <!--android:id="@+id/userChatRight"-->
+    <!--android:background="#888888"-->
+    <!--android:layout_weight="1"-->
+    <!--android:layout_margin="10dp"-->
+    <!--/>-->
+
+
+
+</LinearLayout>

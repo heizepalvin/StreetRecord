@@ -1,5 +1,6 @@
 package com.example.heizepalvin.streetrecord;
 
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.PersistableBundle;
@@ -36,17 +38,24 @@ import com.bumptech.glide.Glide;
 import com.facebook.stetho.inspector.database.ContentProviderSchema;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.jar.Manifest;
 
-import static com.example.heizepalvin.streetrecord.MusicChatActivity.chatItems;
 
 /**
  * Created by soyounguensoo on 2017-08-23.
@@ -64,6 +73,8 @@ public class CreateChatRoomActivity extends AppCompatActivity {
     private Button createImgBtn; // 채팅방 이미지 설정 버튼
     private ImageView createRoomImg; //채팅방 이미지
 
+    private String userSelectGenre;
+
     private static final int PICK_FROM_CAMERA = 0; //카메라로 촬영해서 가져왔을 때
     private static final int PICK_FROM_ALBUM = 1; // 앨범에서 가져왔을 때
     private static final int CROP_FROM_IMAGE = 2; //CROP해서 이미지를 가져왔을 때
@@ -72,7 +83,15 @@ public class CreateChatRoomActivity extends AppCompatActivity {
 
     private String absolutePath;
 
-    private File tempFile;
+    private File tempFile = null;
+
+    private File croppedFileName = null;
+
+    private File images;
+
+    //이미지 설정 다이얼로그
+
+    private AlertDialog alertDialog;
 
     // 권한 설정 변수
 
@@ -90,8 +109,7 @@ public class CreateChatRoomActivity extends AppCompatActivity {
 
         switch (requestCode){
             case PICK_FROM_ALBUM: {
-                // 이후의 처리가 카메라와 같으므로 일단 break없이 진행 합니다.
-                // 실제 코드에서는 좀 더 합리적인 방법을 선택하시기 바랍니다.
+
                 mImageCaptureUri = data.getData();
                 Log.d("SmartWheel", mImageCaptureUri.getPath().toString());
             }
@@ -123,7 +141,7 @@ public class CreateChatRoomActivity extends AppCompatActivity {
                     intent.putExtra("aspectX",3); // CROP 박스의 X축 비율
                     intent.putExtra("aspectY", 3); // CROP 박스의 Y축 비율
                     intent.putExtra("scale",true);
-                    File croppedFileName = null;
+
 
                     try{
                         croppedFileName = createImageFile();
@@ -171,6 +189,8 @@ public class CreateChatRoomActivity extends AppCompatActivity {
                   createRoomImg.setImageBitmap(thumbImage);
                   getApplicationContext().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(tempFile)));
 
+                  Log.e("크롭파일",croppedFileName.getName());
+
               }catch (Exception e){
                   Log.e("ERROR", e.getMessage());
               }
@@ -183,7 +203,7 @@ public class CreateChatRoomActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_chatroom_activity);
 
-        checkPermissions();
+//        checkPermissions();
 
         createTitle = (EditText) findViewById(R.id.createChatActTitle);
         titleCount = (TextView) findViewById(R.id.createChatActTitleCount);
@@ -222,9 +242,15 @@ public class CreateChatRoomActivity extends AppCompatActivity {
                 if(parent.getItemAtPosition(position).equals("직접입력")){
                     createGenre.setVisibility(View.VISIBLE);
                     genreCount.setVisibility(View.VISIBLE);
+
+                    userSelectGenre = (String) parent.getItemAtPosition(position);
+                    Log.e("선택한 장르",userSelectGenre);
                 } else {
                     createGenre.setVisibility(View.GONE);
                     genreCount.setVisibility(View.GONE);
+
+                    userSelectGenre = (String) parent.getItemAtPosition(position);
+                    Log.e("선택한 장르",userSelectGenre);
                 }
             }
 
@@ -267,21 +293,45 @@ public class CreateChatRoomActivity extends AppCompatActivity {
                     if(createGenre.getText().toString().length() == 0){
                         Toast.makeText(CreateChatRoomActivity.this, "장르를 설정해주세요.", Toast.LENGTH_SHORT).show();
                     }
-                } else {
+                    long now = System.currentTimeMillis();
+                    Date date = new Date(now);
+                    SimpleDateFormat formatNow = new SimpleDateFormat("yy/MM/dd HH:mm:ss");
+                    String formatDate = formatNow.format(date);
+
+                    createChatRoom create = new createChatRoom();
+                    Log.e("무슨 장르이냐 ", userSelectGenre);
+                    create.execute(createTitle.getText().toString(), createGenre.getText().toString(),formatDate);
+                    Log.e("방만들기 여기에 들어가나","직접입력 이다 ");
+
+                    if(tempFile!=null){
+                        uploadImage uploadImage = new uploadImage();
+                        uploadImage.execute();
+                    }
+
+                } else{
 
                     long now = System.currentTimeMillis();
                     Date date = new Date(now);
-                    SimpleDateFormat formatNow = new SimpleDateFormat("yy/MM/dd HH:mm");
+                    SimpleDateFormat formatNow = new SimpleDateFormat("yy/MM/dd HH:mm:ss");
                     String formatDate = formatNow.format(date);
+//
+//                    MusicChatItem item = new MusicChatItem(createTitle.getText().toString(),genreSelect.getSelectedItem().toString(),"1",date);
+//                    Log.e("채팅방몇개?",chatItems.size()+"");
+//                    chatItems.add(item);
+//                    Log.e("채팅방몇개?",chatItems.size()+"");
+//                    Intent intent = new Intent(CreateChatRoomActivity.this,MusicChatActivity.class);
+//                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                    startActivity(intent);
+//                    finish();
+                    createChatRoom create = new createChatRoom();
+                    Log.e("무슨 장르이냐 ", userSelectGenre);
+                    create.execute(createTitle.getText().toString(), userSelectGenre, formatDate);
+                    Log.e("방만들기 여기에 들어가나","직접입력 아님 ");
+                    if(tempFile!=null){
+                        uploadImage uploadImage = new uploadImage();
+                        uploadImage.execute();
+                    }
 
-                    MusicChatItem item = new MusicChatItem(createTitle.getText().toString(),genreSelect.getSelectedItem().toString(),"1",date);
-                    Log.e("채팅방몇개?",chatItems.size()+"");
-                    chatItems.add(item);
-                    Log.e("채팅방몇개?",chatItems.size()+"");
-                    Intent intent = new Intent(CreateChatRoomActivity.this,MusicChatActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                    finish();
                 }
             }
         });
@@ -290,6 +340,7 @@ public class CreateChatRoomActivity extends AppCompatActivity {
         createImgBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                checkPermissions();
                 final CharSequence[] items = {"앨범에서 사진 선택","사진 촬영","사진 삭제","취소"};
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(CreateChatRoomActivity.this);
 
@@ -348,14 +399,15 @@ public class CreateChatRoomActivity extends AppCompatActivity {
                         else if(items[which].equals("사진 삭제")) {
 
                             createRoomImg.setImageResource(R.drawable.logos);
-                            Toast.makeText(CreateChatRoomActivity.this, "세번째 선택 사진 삭제", Toast.LENGTH_SHORT).show();
+                            tempFile = null;
+//                            Toast.makeText(CreateChatRoomActivity.this, "세번째 선택 사진 삭제", Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
 
                         }
                         // 다이얼로그 닫기
                         else {
 
-                            Toast.makeText(CreateChatRoomActivity.this, "네번째 선택 취소", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(CreateChatRoomActivity.this, "네번째 선택 취소", Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
                         }
                     }
@@ -363,7 +415,7 @@ public class CreateChatRoomActivity extends AppCompatActivity {
 
                 // 다이얼로그 생성
 
-                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog = alertDialogBuilder.create();
 
                 // 다이얼로그 보여주기
 
@@ -377,39 +429,6 @@ public class CreateChatRoomActivity extends AppCompatActivity {
 
     }
 
-    //비트맵을 저장하는 부분
-//
-//    private void storeCropImage(Bitmap bitmap, String filePath){
-//
-//        //StreetRecord 폴더를 생성하여 이미지를 저장하는 방식이다.
-//        String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/StreetRecord";
-//        File directory_StreetRecord = new File(dirPath);
-//
-//        //StreetRecord 디렉토리에 폴더가 없다면 (새로 이미지를 저장할 경우에 속한다.)
-//        if(!directory_StreetRecord.exists()){
-//            directory_StreetRecord.mkdir();
-//        }
-//
-//        File copyFile = new File(filePath);
-//        BufferedOutputStream out = null;
-//
-//        try{
-//
-//            copyFile.createNewFile();
-//            out = new BufferedOutputStream(new FileOutputStream(copyFile));
-//            bitmap.compress(Bitmap.CompressFormat.JPEG, 100 , out);
-//
-//            //sendBroadcast를 통해 Crop된 사진을 앨범에 보이도록 갱신한다.
-//
-//            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(copyFile)));
-//
-//            out.flush();
-//            out.close();
-//
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
-//    }
 
     private boolean checkPermissions(){
 
@@ -443,17 +462,17 @@ public class CreateChatRoomActivity extends AppCompatActivity {
                         if(permissions[i].equals(this.permissions[0])){
                             if(grantResults[i] != PackageManager.PERMISSION_GRANTED){
                                 Toast.makeText(this, "권한 요청에 동의를 해야 이용 가능합니다. 설정에서 권한 허용을 해주시기 바랍니다.", Toast.LENGTH_SHORT).show();
-                                finish();
+                                alertDialog.dismiss();
                             }
                         } else if(permissions[i].equals(this.permissions[1])){
                             if(grantResults[i] != PackageManager.PERMISSION_GRANTED){
                                 Toast.makeText(this, "권한 요청에 동의를 해야 이용 가능합니다. 설정에서 권한 허용을 해주시기 바랍니다.", Toast.LENGTH_SHORT).show();
-                                finish();
+                                alertDialog.dismiss();
                             }
                         } else if(permissions[i].equals(this.permissions[2])){
                             if(grantResults[i] != PackageManager.PERMISSION_GRANTED){
                                 Toast.makeText(this, "권한 요청에 동의를 해야 이용 가능합니다. 설정에서 권한 허용을 해주시기 바랍니다.", Toast.LENGTH_SHORT).show();
-                                finish();
+                                alertDialog.dismiss();
                             }
 
                         }
@@ -479,8 +498,208 @@ public class CreateChatRoomActivity extends AppCompatActivity {
             storageDir.mkdirs();
         }
 
-        File image = File.createTempFile(imageFileName,".jpg",storageDir);
+        images = File.createTempFile(imageFileName,".jpg",storageDir);
 
-        return image;
+        return images;
+    }
+
+    //채팅방 데이터베이스에 업데이트
+
+    private class createChatRoom extends AsyncTask<String,Void,String>{
+
+        ProgressDialog progressDialog;
+        String image = null;
+        String postData;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            progressDialog = ProgressDialog.show(CreateChatRoomActivity.this,"잠시만 기다려주세요.",null,true,true);
+
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            progressDialog.dismiss();
+
+            if(s != null){
+                Toast.makeText(CreateChatRoomActivity.this, s, Toast.LENGTH_LONG).show();
+                Log.e("결과",s);
+                Intent intent = new Intent(CreateChatRoomActivity.this, MusicChatActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                finish();
+            }
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            String serverURL = "http://115.71.232.155/chat/createRoom.php";
+
+            String title = params[0];
+            String genre = params[1];
+            if(tempFile != null){
+                image = String.valueOf("http://115.71.232.155/uploads/"+croppedFileName.getName());
+            }
+            String date = params[2];
+
+            try{
+
+                URL url = new URL(serverURL);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setConnectTimeout(5000);
+                conn.setReadTimeout(5000);
+                conn.setDoInput(true);
+                conn.connect();
+
+                if(image !=null ){
+                   postData = "title="+title+"&genre="+genre+"&date="+date+"&image="+image+"&memberCount="+1;
+                } else{
+                   postData = "title="+title+"&genre="+genre+"&date="+date+"&memberCount="+1;
+                }
+
+                OutputStream outputStream = conn.getOutputStream();
+                outputStream.write(postData.getBytes("UTF-8"));
+                outputStream.flush();
+                outputStream.close();
+
+                int responseCode = conn.getResponseCode();
+                InputStream inputStream;
+
+                if(responseCode == conn.HTTP_OK){
+                    inputStream = conn.getInputStream();
+                } else {
+                    inputStream = conn.getErrorStream();
+                }
+
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while((line=bufferedReader.readLine())!=null){
+                    sb.append(line+"\n");
+                }
+
+                bufferedReader.close();
+
+                return sb.toString().trim();
+
+            } catch (Exception e){
+
+                Log.e("createChatRoomActivity","Exception : " + e);
+
+                return null;
+            }
+
+
+
+        }
+    }
+
+    private class uploadImage extends AsyncTask<String, Void, String>{
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            if(s != null){
+                Toast.makeText(CreateChatRoomActivity.this, s, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            String serverURL = "http://115.71.232.155/uploadImage.php";
+
+            String lineEnd = "\r\n";
+            String twoHyphens = "--";
+            String boundary = "*****";
+
+            Log.e("크롭된이미지이름", String.valueOf(croppedFileName));
+
+//            if(!tempFile.equals(null)){
+                try{
+
+                    FileInputStream fileInputStream = new FileInputStream(tempFile);
+                    URL url = new URL(serverURL);
+
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setDoInput(true);
+                    conn.setDoOutput(true);
+                    conn.setUseCaches(false);
+                    conn.setRequestMethod("POST");
+                    conn.setRequestProperty("Connection", "Keep-Alive");
+                    conn.setRequestProperty("ENCTYPE", "multipart/form-data");
+                    conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+                    conn.setRequestProperty("uploaded_file", String.valueOf(tempFile));
+
+                    DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
+
+                    Log.e("이미지경로", String.valueOf(tempFile));
+                    dos.writeBytes(twoHyphens+boundary+lineEnd);
+                    dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename=\""
+                            + String.valueOf(tempFile) + "\"" + lineEnd);
+                    Log.e("dddddasdflkajsdflk","Content-Disposition: form-data; name=\"uploaded_file\";filename=\""
+                            + String.valueOf(tempFile) + "\"" + lineEnd);
+                    dos.writeBytes(lineEnd);
+
+
+                    int bytesAvailable = fileInputStream.available();
+                    int maxBufferSize = 1*1024*1024;
+                    int bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                    byte[] buffer = new byte[bufferSize];
+                    int bytesRead = fileInputStream.read(buffer,0,bufferSize);
+
+                    while(bytesRead > 0){
+
+                        dos.write(buffer,0,bufferSize);
+                        bytesAvailable = fileInputStream.available();
+                        bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                        bytesRead = fileInputStream.read(buffer,0,bufferSize);
+
+                    }
+
+                    dos.writeBytes(lineEnd);
+                    dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+
+                    int serverResponseCode = 0;
+
+                    serverResponseCode = conn.getResponseCode();
+                    String serverResponseMessage = conn.getResponseMessage();
+
+                    Log.e("uploadFile", "HTTP Response is : "+ serverResponseMessage + ": " + serverResponseCode);
+
+                    if(serverResponseCode == 200){
+
+                        return "서버에 전송 완료";
+                    }
+
+                    fileInputStream.close();
+                    dos.flush();
+                    dos.close();
+
+
+                }catch (Exception e){
+
+                    e.printStackTrace();
+                    return "서버에 전송 실패";
+
+                }
+
+//            }
+            return null;
+
+        }
     }
 }

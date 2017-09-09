@@ -8,8 +8,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -55,26 +58,14 @@ public class MusicChatAdapter extends RecyclerView.Adapter<MusicChatAdapter.View
             }
         });
 
-//        long now = System.currentTimeMillis();
-//        Date date = new Date(now);
-//        SimpleDateFormat dateFormat = new SimpleDateFormat("yy/MM/dd");
-//        String dates = dateFormat.format(date);
-//        String[] splitTime = item.getTime().split(" ");
-//        Log.e("whatTime",item.getTime());
-//        Log.e("split",splitTime[0]);
-//        if(splitTime[0].equals(dates)){
-//            String[] dateSplit = item.getTime().split(" ");
-//            String time = dateSplit[1];
-//            holder.time.setText(time);
-//        } else {
-//            String[] dateSplit = item.getTime().split(" ");
-//            holder.time.setText(dateSplit[0]);
-//        }
         String calTime = calculateTime(item.getTime());
         holder.time.setText(calTime);
         holder.genre.setText(item.getGenre());
-        holder.memberNumber.setText(item.getMemberNumber());
-
+        holder.memberNumber.setText(item.getMemberCount() + "");
+        Glide.with(context).load(item.getImage()).into(holder.chatRoomImage);
+        if(item.getImage() ==null ){
+            Glide.with(context).load(R.drawable.logoface).into(holder.chatRoomImage);
+        }
     }
 
 
@@ -83,7 +74,9 @@ public class MusicChatAdapter extends RecyclerView.Adapter<MusicChatAdapter.View
 
     @Override
     public int getItemCount() {
-        return items.size();
+
+           return items.size();
+
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -93,6 +86,7 @@ public class MusicChatAdapter extends RecyclerView.Adapter<MusicChatAdapter.View
         TextView memberNumber;
         TextView time;
         CardView cardView;
+        ImageView chatRoomImage;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -102,7 +96,7 @@ public class MusicChatAdapter extends RecyclerView.Adapter<MusicChatAdapter.View
             memberNumber = (TextView) itemView.findViewById(R.id.musicChatActNum);
             time = (TextView) itemView.findViewById(R.id.musicChatActTime);
             cardView = (CardView) itemView.findViewById(R.id.musicChatActCardView);
-
+            chatRoomImage = (ImageView) itemView.findViewById(R.id.musicChatActImage);
         }
 
     }
