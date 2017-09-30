@@ -1,7 +1,12 @@
 package com.example.heizepalvin.streetrecord;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,11 +19,16 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+
+import static com.example.heizepalvin.streetrecord.MusicChatActivity.chatItems;
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * Created by soyounguensoo on 2017-08-22.
@@ -29,6 +39,8 @@ public class MusicChatAdapter extends RecyclerView.Adapter<MusicChatAdapter.View
     Context context;
     ArrayList<MusicChatItem> items;
     int item_layout;
+    private ChattingDatabase dbHelper;
+    private SQLiteDatabase db;
 
     public MusicChatAdapter(Context context, ArrayList<MusicChatItem> items, int item_layout){
         this.context = context;
@@ -41,20 +53,58 @@ public class MusicChatAdapter extends RecyclerView.Adapter<MusicChatAdapter.View
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.music_chat_cardview,null);
+
+
         return new ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
 
         final MusicChatItem item = items.get(position);
         holder.title.setText(item.getTitle());
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context,ChatingActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
+
+                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(holder.itemView.getContext());
+
+                alertBuilder.setTitle("오픈채팅방 참여");
+                alertBuilder.setMessage("채팅방에 참여하시겠습니까?").setPositiveButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                }).setNegativeButton("참여", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //사용자 로컬 데이터베이스에 저장하기
+
+                        dbHelper = new ChattingDatabase(context,"chattingDB",null,1);
+                        db = dbHelper.getWritableDatabase();
+//                        dbHelper.onCreate(db);
+//                        db.execSQL("drop table chatRoom;");
+                        Date date = new Date(System.currentTimeMillis());
+                        SimpleDateFormat curtimeFormat = new SimpleDateFormat("a hh:mm");
+                        String time = curtimeFormat.format(date);
+                        SimpleDateFormat datePlusTime = new SimpleDateFormat("yy/MM/dd a hh:mm:ss");
+                        String datePlusTimes = datePlusTime.format(date);
+                        dbHelper.insert(db,item.getTitle(),"",item.getImage(),time,item.getNum(),datePlusTimes);
+
+                        //사용자 로컬 데이터베이스에 저장하기 끝
+
+                        Intent intent = new Intent(context,ChatingActivity.class);
+
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra("title",item.getTitle());
+                        intent.putExtra("token",item.getNum());
+                        context.startActivity(intent);
+                    }
+                });
+
+                AlertDialog alertDialog = alertBuilder.create();
+                alertDialog.show();
+
             }
         });
 
@@ -66,6 +116,8 @@ public class MusicChatAdapter extends RecyclerView.Adapter<MusicChatAdapter.View
         if(item.getImage() ==null ){
             Glide.with(context).load(R.drawable.logoface).into(holder.chatRoomImage);
         }
+
+
     }
 
 
@@ -157,4 +209,6 @@ public class MusicChatAdapter extends RecyclerView.Adapter<MusicChatAdapter.View
 
         return msg;
     }
+
+
 }

@@ -14,20 +14,24 @@ public class MusicChatItem {
     Date time;
     int memberCount;
     String image;
+    int num;
 
-    public MusicChatItem (String title, String genre, int memberCount, Date time){
+    public MusicChatItem (String title, String genre, int memberCount, Date time, int num){
         this.title = title;
         this.genre = genre;
         this.memberCount = memberCount;
         this.time = time;
+        this.num = num;
     }
 
-    public MusicChatItem (String title, String genre, int memberCount, Date time, String image){
+    public MusicChatItem (String title, String genre, int memberCount, Date time, String image, int num){
         this.title = title;
         this.genre = genre;
         this.memberCount = memberCount;
         this.time = time;
         this.image = image;
+        this.num = num;
+
     }
 
     public String getTitle() {
@@ -77,5 +81,13 @@ public class MusicChatItem {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public int getNum() {
+        return num;
+    }
+
+    public void setNum(int num) {
+        this.num = num;
     }
 }

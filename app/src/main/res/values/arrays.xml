@@ -2,7 +2,7 @@
 <resources>
     <string-array name="genre">
         <item>발라드</item>
-        <item>R&amp;B</item>
+        <item>알앤비</item>
         <item>댄스</item>
         <item>랩/힙합</item>
         <item>인디음악</item>
@@ -16,12 +16,22 @@
         <item>상관없음</item>
         <item>직접입력</item>
     </string-array>
-    <string-array name="age">
-        <item>10대</item>
-        <item>20대</item>
-        <item>30대</item>
-        <item>40대</item>
-        <item>50대</item>
-        <item>60대이상</item>
+    <string-array name="filter">
+        <item>모든 채팅방</item>
+        <item>통합검색</item>
+        <item>발라드</item>
+        <item>알앤비</item>
+        <item>댄스</item>
+        <item>랩/힙합</item>
+        <item>인디음악</item>
+        <item>락/메탈</item>
+        <item>트로트</item>
+        <item>클래식</item>
+        <item>EDM</item>
+        <item>팬클럽</item>
+        <item>아이돌</item>
+        <item>음악작업</item>
+        <item>상관없음</item>
+        <item>기타</item>
     </string-array>
 </resources>

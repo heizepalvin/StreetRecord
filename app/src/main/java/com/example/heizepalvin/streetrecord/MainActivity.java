@@ -1,5 +1,7 @@
 package com.example.heizepalvin.streetrecord;
 
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -134,16 +136,29 @@ public class MainActivity extends AppCompatActivity {
                     GlobalApplication.getInstance().getServiceInterface().forward();
                     updateUI();
                 }
-            } else if(intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)){
+            }
+            else if(intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)){
                 int state = intent.getIntExtra("state",-1);
                 switch (state){
                     case 0:
                         Log.e("헤드폰", String.valueOf(state) + " 헤드셋 빠짐");
-                        GlobalApplication.getInstance().getServiceInterface().pause();
-                        updateUI();
+                        SharedPreferences preferences = getSharedPreferences("PlugOn",MODE_PRIVATE);
+                        Boolean plug = preferences.getBoolean("plugOn",false);
+                        if(plug){
+                            GlobalApplication.getInstance().getServiceInterface().pause();
+                            Log.e("17/09/27","여기때매 그런건가?");
+                            updateUI();
+                            SharedPreferences.Editor editor = preferences.edit();
+                            editor.clear();
+                            editor.commit();
+                        }
                         break;
                     case 1:
                         Log.e("헤드폰", String.valueOf(state) + " 헤드셋 껴짐");
+                        SharedPreferences pref = getSharedPreferences("plugOn",MODE_PRIVATE);
+                        SharedPreferences.Editor editor = pref.edit();
+                        editor.putBoolean("plugOn",true);
+                        editor.commit();
                         break;
                 }
             }
@@ -181,6 +196,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         setContentView(R.layout.activity_main);
+
+
+        //  17/9/19 채팅 리시브 서비스 시작
+
+        Intent intent = new Intent(MainActivity.this,ChattingService.class);
+        startService(intent);
+
+        boolean service = isServiceRunningCheck();
+
+        Log.e("서비스가 돌고있나",service+"");
 
 
 //        SharedPreferences preferences12 = getSharedPreferences("facebook",MODE_PRIVATE);
@@ -459,7 +484,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
 
 
     public void registerBroadcast(){
@@ -1004,6 +1028,20 @@ public class MainActivity extends AppCompatActivity {
                loginUser.setText(user+"님");
             }
         }
+
+
     }
+
+
+    public boolean isServiceRunningCheck() {
+        ActivityManager manager = (ActivityManager) this.getSystemService(Activity.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if ("com.example.heizepalvin.streetrecord.ChattingService".equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
 }

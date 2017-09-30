@@ -7,6 +7,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -46,6 +47,7 @@ public class MusicChatActivity extends AppCompatActivity {
         setContentView(R.layout.music_chat_activity);
 
 
+
         createChatRoom = (LinearLayout) findViewById(R.id.musicChatActCreateChat);
 
         vp = (ViewPager) findViewById(R.id.musicChatActViewPager);
@@ -63,9 +65,6 @@ public class MusicChatActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-
-
 
 
         navigationView = (BottomNavigationView) findViewById(R.id.musicChatActBottom);
@@ -132,7 +131,6 @@ public class MusicChatActivity extends AppCompatActivity {
 
     private class pagerAdapter extends FragmentStatePagerAdapter{
 
-
         public pagerAdapter(FragmentManager fm) {
             super(fm);
         }
@@ -158,10 +156,32 @@ public class MusicChatActivity extends AppCompatActivity {
 
         @Override
         public int getItemPosition(Object object) {
+                Log.e("여긴 몇번감","ㅁㄴㅇㄹ");
+
+            if(object instanceof MusicChatActFragmentRoomList){
                 return POSITION_NONE;
+            } else if(object instanceof MusicChatActFragmentHome){
+                return POSITION_NONE;
+            } else {
+                return super.getItemPosition(object);
+            }
+        }
+
+        @Override
+        public void finishUpdate(ViewGroup container) {
+            try{
+                super.finishUpdate(container);
+            } catch (NullPointerException nullPointerException){
+                Log.e("MusicChatActivity","Catch the NullPointerException in FragmentPagerAdapter.finishUpdate");
             }
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+}
 
 
 

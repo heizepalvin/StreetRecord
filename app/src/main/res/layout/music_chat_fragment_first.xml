@@ -1,18 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/musicChatSwipeLayout">
-
-    <android.support.v7.widget.RecyclerView
-    android:id="@+id/musicChatActRecycle"
     android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_weight="1" />
+    android:layout_height="match_parent"
+    android:background="#fff"
+    android:orientation="vertical">
+
+    <Spinner
+        android:id="@+id/chatFragmentFilter"
+        style="@style/Widget.AppCompat.Spinner.DropDown"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/spinner"
+        android:entries="@array/filter" />
+
+    <EditText
+        android:id="@+id/chatFragmentSearch"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:ems="10"
+        android:hint="검색어를 입력해주세요."
+        android:imeOptions="actionSearch"
+        android:inputType="text"
+        android:visibility="visible" />
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/musicChatSwipeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="12">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/musicChatActRecycle"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>

@@ -61,7 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:gravity="center"
-        android:text="장르를 설정해주세요."
+        android:text="장르(주제)를 설정해주세요."
         android:textColor="#fff"
         android:textSize="15sp" />
 

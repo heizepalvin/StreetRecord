@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.media.ThumbnailUtils;
@@ -98,6 +99,10 @@ public class CreateChatRoomActivity extends AppCompatActivity {
     private String[] permissions = {android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA};
     private static final int MULTIPLE_PERMISSIONS = 101; // 권한 동의 여부 문의 후 CallBack 함수에 쓰일 변수
 
+    //로컬데이터베이스 저장
+
+    private ChattingDatabase dbHelper;
+    private SQLiteDatabase db;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -303,6 +308,8 @@ public class CreateChatRoomActivity extends AppCompatActivity {
                     create.execute(createTitle.getText().toString(), createGenre.getText().toString(),formatDate);
                     Log.e("방만들기 여기에 들어가나","직접입력 이다 ");
 
+
+
                     if(tempFile!=null){
                         uploadImage uploadImage = new uploadImage();
                         uploadImage.execute();
@@ -327,6 +334,9 @@ public class CreateChatRoomActivity extends AppCompatActivity {
                     Log.e("무슨 장르이냐 ", userSelectGenre);
                     create.execute(createTitle.getText().toString(), userSelectGenre, formatDate);
                     Log.e("방만들기 여기에 들어가나","직접입력 아님 ");
+
+
+
                     if(tempFile!=null){
                         uploadImage uploadImage = new uploadImage();
                         uploadImage.execute();
@@ -367,16 +377,6 @@ public class CreateChatRoomActivity extends AppCompatActivity {
 
                             //카메라,외부저장소 권한 설정
 
-//                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//
-//                                    //임시로 사용할 파일의 경로를 생성
-//                                    String url = "tmp_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
-//                                    mImageCaptureUri = FileProvider.getUriForFile(CreateChatRoomActivity.this,"com.example.heizepalvin.streetrecord.provider",new File(Environment.getExternalStorageDirectory(),url));
-//
-//                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
-//                                    startActivityForResult(intent, PICK_FROM_CAMERA);
-//                                    Toast.makeText(CreateChatRoomActivity.this, "두번째 선택 촬영", Toast.LENGTH_SHORT).show();
-//                                    dialog.dismiss();
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                             File photoFile = null;
 
@@ -526,10 +526,23 @@ public class CreateChatRoomActivity extends AppCompatActivity {
             progressDialog.dismiss();
 
             if(s != null){
-                Toast.makeText(CreateChatRoomActivity.this, s, Toast.LENGTH_LONG).show();
                 Log.e("결과",s);
-                Intent intent = new Intent(CreateChatRoomActivity.this, MusicChatActivity.class);
+                String[] splitResult = s.split("/");
+                String toastResult = splitResult[0];
+                int token = Integer.parseInt(splitResult[1]);
+                Toast.makeText(CreateChatRoomActivity.this, toastResult, Toast.LENGTH_LONG).show();
+                dbHelper = new ChattingDatabase(getApplicationContext(),"chattingDB",null,1);
+                db = dbHelper.getWritableDatabase();
+                Date otherDate = new Date(System.currentTimeMillis());
+                SimpleDateFormat format = new SimpleDateFormat("a hh:mm");
+                String otherTime = format.format(otherDate);
+                SimpleDateFormat datePlusTime = new SimpleDateFormat("yy/MM/dd a hh:mm:ss");
+                String datePlusTimes = datePlusTime.format(otherDate);
+                dbHelper.insert(db,createTitle.getText().toString(),"",image,otherTime,token,datePlusTimes);
+                Intent intent = new Intent(CreateChatRoomActivity.this, ChatingActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("token",token);
+                intent.putExtra("title",createTitle.getText().toString());
                 startActivity(intent);
                 finish();
             }
@@ -558,9 +571,9 @@ public class CreateChatRoomActivity extends AppCompatActivity {
                 conn.connect();
 
                 if(image !=null ){
-                   postData = "title="+title+"&genre="+genre+"&date="+date+"&image="+image+"&memberCount="+1;
+                   postData = "title="+title+"&genre="+genre+"&date="+date+"&image="+image+"&memberCount="+0;
                 } else{
-                   postData = "title="+title+"&genre="+genre+"&date="+date+"&memberCount="+1;
+                   postData = "title="+title+"&genre="+genre+"&date="+date+"&memberCount="+0;
                 }
 
                 OutputStream outputStream = conn.getOutputStream();
