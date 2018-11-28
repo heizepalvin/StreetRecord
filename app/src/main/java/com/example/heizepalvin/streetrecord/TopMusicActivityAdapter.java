@@ -102,18 +102,12 @@ public class TopMusicActivityAdapter extends BaseAdapter{
                         helper = new PlaylistDatabase(finalConvertView.getContext(),"playlist",null,version);
                         db = helper.getWritableDatabase();
                         int count = helper.search(db,items.get(position).getTitle());
-                        Log.e("테스트테스트테스트","count ? " + count);
                         if(count != 1){
                             helper.insert(db,items.get(position).getTitle(),items.get(position).getArtist(),items.get(position).getAlbumImg(),items.get(position).getMusicURL(),items.get(position).getLyrics(), items.get(position).getAlbumName(),items.get(position).getDate(),items.get(position).getGenre());
-
-                            Log.e("topMusicAct","title ? " + items.get(position).getTitle());
-                            Log.e("topMusicAct","artist ? " + items.get(position).getArtist());
-                            Log.e("topMusicAct","albumImg ? " + items.get(position).getAlbumImg());
                         } else {
                             helper.delete(db,items.get(position).getTitle());
                             helper.insert(db,items.get(position).getTitle(),items.get(position).getArtist(),items.get(position).getAlbumImg(),items.get(position).getMusicURL(),items.get(position).getLyrics(), items.get(position).getAlbumName(),items.get(position).getDate(),items.get(position).getGenre());
                             Toast.makeText(finalConvertView.getContext(), "중복되는 곡을 삭제하고 재생합니다.", Toast.LENGTH_SHORT).show();
-                            Log.e("테스트테스트테스트","들어옴 들어옴!");
                             Log.e("topMusicAct","title ? " + items.get(position).getTitle());
                             Log.e("topMusicAct","artist ? " + items.get(position).getArtist());
                             Log.e("topMusicAct","albumImg ? " + items.get(position).getAlbumImg());
@@ -126,7 +120,6 @@ public class TopMusicActivityAdapter extends BaseAdapter{
 
                     }catch (SQLiteException e){
                         e.printStackTrace();
-                        Log.e("TopMusicActDatabaseException","데이터베이스를 가져올 수 없음.");
                     }
                 } else{
                     Toast.makeText(finalConvertView.getContext(), "로그인을 해주세요.", Toast.LENGTH_SHORT).show();
