@@ -42,28 +42,21 @@ public class PlaylistAdpater extends RecyclerView.Adapter<PlaylistViewHolder> im
         if(insertMode) {
             if (seleteList.size() == 0) {
                 String addPosition = String.valueOf(position);
-                Log.e("에드포지션", addPosition);
                 seleteList.add(addPosition);
-                Log.e("들어온다", "1번째 들어옴");
                 itemView.setBackgroundColor(Color.rgb(204, 204, 153));
             } else {
                 String selectPosition = String.valueOf(position);
                 boolean select = seleteList.contains(selectPosition);
-                Log.e("select가 뭔가", select + "??");
                 if (select) {
                     itemView.setBackgroundColor(Color.WHITE);
                     String removeSelect = String.valueOf(position);
                     seleteList.remove(removeSelect);
-                    Log.e("select 지워졋냐", removeSelect);
-                    Log.e("select 지워졌냐", seleteList.size() + " ? ");
                 } else {
                     String addPosition = String.valueOf(position);
                     seleteList.add(addPosition);
                     itemView.setBackgroundColor(Color.rgb(204, 204, 153));
-                    Log.e("들어온다", "세번째");
                 }
             }
-            Log.e("selectList", "selectList 사이즈는 ? " + seleteList.size());
         }
     }
 
@@ -157,15 +150,12 @@ public class PlaylistAdpater extends RecyclerView.Adapter<PlaylistViewHolder> im
         if(insertMode) {
             if (!seleteList.isEmpty()) {
                 for (int i = 0; i < seleteList.size(); i++) {
-                    Log.e("몇번들어가나? for문", "ㅁㄴㅇㄻㄴㅇㄻㄴㅇㄹ");
                     String select = seleteList.get(i);
                     if (select.equals(String.valueOf(position))) {
                         holder.playlistItem.setBackgroundColor(Color.rgb(204, 204, 153));
-                        Log.e("몇번들어가니 첫번째", "ㅁㄴㅇㄹ");
                         break;
                     } else {
                         holder.playlistItem.setBackgroundColor(Color.WHITE);
-                        Log.e("몇번들어가니 두번째", "ㅁㄴㅇㄹ");
                     }
                 }
             } else {
@@ -173,7 +163,6 @@ public class PlaylistAdpater extends RecyclerView.Adapter<PlaylistViewHolder> im
             }
         } else {
             holder.playlistItem.setBackgroundColor(Color.WHITE);
-//            Log.e("insertMode?" , insertMode + " 여기야? ??");
         }
 
     }
@@ -186,7 +175,6 @@ public class PlaylistAdpater extends RecyclerView.Adapter<PlaylistViewHolder> im
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
         Collections.swap(items, fromPosition, toPosition);
-        Log.e("onItemMove","fromPosition = " + fromPosition + "toPosition = " + toPosition);
         notifyItemMoved(fromPosition,toPosition);
         helper = new PlaylistDatabase(context,"playlist",null,1);
         db  = helper.getWritableDatabase();
