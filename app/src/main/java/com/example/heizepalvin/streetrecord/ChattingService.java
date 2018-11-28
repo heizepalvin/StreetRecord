@@ -82,14 +82,11 @@ public class ChattingService extends Service {
         conn.execute();
 
         roomlists = new ArrayList<>();
-
-        Log.e("여기들어오나","서비스 온크리트");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Log.e("여기들어오나","서비스 온스타트커멘드");
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         SharedPreferences preferences = getSharedPreferences("login",MODE_PRIVATE);
         userID = preferences.getString("userID","false");
@@ -97,10 +94,8 @@ public class ChattingService extends Service {
             userID = preferences.getString("userName","false");
         }
 
-        Log.e("스레드는?",thread+"");
         getUserRoomList getList = new getUserRoomList();
         getList.execute();
-        Log.e("유저아이디는",userID);
 
         return START_STICKY;
     }
@@ -115,7 +110,6 @@ public class ChattingService extends Service {
 
             SharedPreferences sharedPreferences = getSharedPreferences("roomNumber",MODE_PRIVATE);
             chatToken = sharedPreferences.getInt("token",123456789);
-            Log.e("토큰값좀요",chatToken+" 챗토큰 " + receiveToken + " 리시브토큰");
 
 
             Date date = new Date(System.currentTimeMillis());
@@ -208,7 +202,6 @@ public class ChattingService extends Service {
                     break;
 
                 case 5:
-                    // 17/09/28 이미지 전송 부분(자기자신이 보낸 이미지)
 
                     ChatingItem myImageMsg = new ChatingItem(receiveMsg,"2",time,userID,dates);
                     chatlist.add(myImageMsg);
@@ -243,7 +236,6 @@ public class ChattingService extends Service {
                     }
 
                     notificationGet();
-                    // 17/09/28 이미지 전송 부분(다른사람이 보낸 이미지)
             }
 
 
@@ -256,12 +248,6 @@ public class ChattingService extends Service {
 
         if(receiveToken != chatToken){
 
-            // 17/09/23 Notification 부분 수정 후 (10주차때 다시 시작.)
-//            Date date = new Date(System.currentTimeMillis());
-//            SimpleDateFormat curtimeFormat = new SimpleDateFormat("a hh:mm");
-//            String time = curtimeFormat.format(date);
-
-            // 17/09/23 채팅방 목록에 나타나는 숫자 표시!(안읽은 메시지)
             dbHelper.countUpdate(db,receiveToken,1);
             if(vp != null && chatAdapter !=null){
                 if(vp.getAdapter()!=null){
@@ -269,9 +255,7 @@ public class ChattingService extends Service {
                 }
                 chatAdapter.notifyDataSetChanged();
             }
-            //끝
 
-            // 17/09/23 Notification 부분 수정 전
 
             Intent intent = new Intent(ChattingService.this, MusicChatActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(ChattingService.this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
@@ -306,22 +290,6 @@ public class ChattingService extends Service {
             notification.flags = Notification.FLAG_ONLY_ALERT_ONCE;
             notification.flags = Notification.FLAG_AUTO_CANCEL;
             notificationManager.notify(receiveToken,notification);
-//                Toast.makeText(ChattingService.this, "뜨냐?", Toast.LENGTH_SHORT).show();
-
-            // 17/09/23 Notification 수정 전 끝
-
-            // 17/09/23 Notification 수정 후 (10주차때 다시 시작해야함.)
-//            Intent intent = new Intent(ChattingService.this, MusicChatActivity.class);
-//            PendingIntent pendingIntent = PendingIntent.getActivity(ChattingService.this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
-//            contentView = new RemoteViews(getPackageName(), R.layout.chatting_notification);
-//            contentView.setTextViewText(R.id.chatNotificationTitle,receiveRoomTitle);
-//            contentView.setTextViewText(R.id.chatNotificationContents,receiveUserID+" : " + receiveMsg);
-//            contentView.setTextViewText(R.id.chatNotificationTime,time);
-//            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-//                    .setSmallIcon(R.drawable.logoface)
-//                    .setContent(contentView)
-//                    .setContentIntent(pendingIntent);
-//            notificationManager.notify(receiveToken,mBuilder.build());
 
             if(fragmentRoomListItems != null){
                 fragmentRoomListItems.clear();
@@ -337,10 +305,8 @@ public class ChattingService extends Service {
             super.onPostExecute(s);
             serviceHandler handler = new serviceHandler();
             thread = new ChatingActivity.receiveThread(handler);
-            Log.e("핸들러가 왜 ㅡㅡ",handler+"");
             thread.setSocket(socket);
 
-            Log.e("소켓",socket+"");
         }
 
         @Override
@@ -354,12 +320,9 @@ public class ChattingService extends Service {
                 bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
 
-                Log.e("br이 널이냐?",br+"");
-                Log.e("bw이 널이냐?",bw+"");
 
                 String serverMsg = br.readLine();
 
-                Log.e("여기서받는건가?",serverMsg);
 
                 return serverMsg;
 
@@ -379,7 +342,6 @@ public class ChattingService extends Service {
 
             if(s!= null){
                 jsonList = s;
-//                Log.e("뭐가져옴",s);
                 getJsonList();
             }
         }
@@ -445,17 +407,12 @@ public class ChattingService extends Service {
                 JSONObject item = jsonArray.getJSONObject(i);
 
                 String token = String.valueOf(item.getInt("token"));
-//                Log.e("토큰뭐가져오나서비스에서",token);
                 roomlists.add(token);
             }
-            Log.e("thread 실행중인가?",thread.isAlive()+"");
             thread.setUserRoomList(roomlists);
-            Log.e("리스트사이즈",roomlists.size()+"");
             if(!thread.isAlive()){
                 thread.start();
-                Log.e("얼라이브들어가나","들어왔어요");
             }
-            Log.e("thread 실행중인가?",thread.isAlive()+"");
         }catch (JSONException e){
             Log.e("ChattingService","JSONException : " + e);
         }
@@ -471,12 +428,6 @@ public class ChattingService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        thread = null;
-//        try {
-//            socket.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
     }
 
 
