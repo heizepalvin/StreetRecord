@@ -136,10 +136,8 @@ public class NotificationPlayer {
 
             if(audioService.isPlaying()){
                 remoteViews.setImageViewResource(R.id.notificationPlay, R.drawable.pause);
-                Log.e("업데이트리모트뷰에 들어옴","true");
             } else {
                 remoteViews.setImageViewResource(R.id.notificationPlay, R.drawable.play);
-                Log.e("업데이트리모트뷰에 들어옴","false");
             }
 
         }
