@@ -170,17 +170,6 @@ public class ChatingActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-
-
-
-//        try {
-//            if(socket != null){
-//                socket.close();
-//                sendWriter.close();
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
     }
 
     @Override
@@ -261,8 +250,6 @@ public class ChatingActivity extends AppCompatActivity {
                     startActivityForResult(i,CROP_FROM_IMAGE);
 
                 }
-//                startActivityForResult(intent, CROP_FROM_IMAGE); // CROP_FROM_IMAGE case문으로 이동
-
                 break;
             }
 
@@ -275,10 +262,8 @@ public class ChatingActivity extends AppCompatActivity {
 
                     getApplicationContext().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(tempFile)));
 
-                    Log.e("크롭파일",croppedFileName.getName());
 
                 }catch (Exception e){
-                    Log.e("ERROR", e.getMessage());
                 }
             }
         }
@@ -291,7 +276,6 @@ public class ChatingActivity extends AppCompatActivity {
             super.onPostExecute(s);
 
             if(s != null){
-                Log.e("채팅방 이미지 전송",s);
                 messageSend imageSend = new messageSend();
                 sendString = "http://115.71.232.155/uploads/"+croppedFileName.getName();
                 imageSend.execute();
@@ -307,7 +291,6 @@ public class ChatingActivity extends AppCompatActivity {
             String twoHyphens = "--";
             String boundary = "*****";
 
-            Log.e("크롭된이미지이름", String.valueOf(croppedFileName));
 
 //            if(!tempFile.equals(null)){
             try{
@@ -327,11 +310,8 @@ public class ChatingActivity extends AppCompatActivity {
 
                 DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
 
-                Log.e("이미지경로", String.valueOf(tempFile));
                 dos.writeBytes(twoHyphens+boundary+lineEnd);
                 dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename=\""
-                        + String.valueOf(tempFile) + "\"" + lineEnd);
-                Log.e("dddddasdflkajsdflk","Content-Disposition: form-data; name=\"uploaded_file\";filename=\""
                         + String.valueOf(tempFile) + "\"" + lineEnd);
                 dos.writeBytes(lineEnd);
 
@@ -505,9 +485,7 @@ public class ChatingActivity extends AppCompatActivity {
         //이 방번호가 저장이 안되어있을 경우에만 저장
         if(!userRoomTokenList.contains(String.valueOf(chatToken))){
             userRoomTokenList.add(String.valueOf(chatToken));
-            Log.e("유저참여방번호들",userRoomTokenList.size()+"");
         }
-        Log.e("유저참여방번호들",userRoomTokenList.size()+"");
 
 
 
@@ -520,7 +498,6 @@ public class ChatingActivity extends AppCompatActivity {
 
         //현재 방안에 위치해있다면 방의 번호가 저장되어있을 것이고, 대기실이라면 없을 것이다.
 
-        Log.e("토큰토큰",chatToken+"");
 
         //대화 목록 불러오기(로컬데이터베이스에 저장되있을때) 처음 참여자 말고
         dbHelper = new ChattingDatabase(this,"chattingDB",null,1);
@@ -587,12 +564,10 @@ public class ChatingActivity extends AppCompatActivity {
                         deleteData.execute();
 
                         //참여중인 채팅방목록에서 삭제하기 (로컬데이터베이스 삭제) 채팅기록도 삭제
-                        Log.e("토큰이 뭔데",chatToken+"");
 
                         dbHelper.delete(db,chatToken);
 
                         userRoomTokenList.remove(String.valueOf(chatToken));
-                        Log.e("userRoomTokenListRemove",userRoomTokenList.size()+"");
 
                         Intent intent = new Intent(ChatingActivity.this,ChattingService.class);
                         startService(intent);
@@ -625,7 +600,6 @@ public class ChatingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                     sendString = chatingInput.getText().toString();
-                    Log.e("보내려고하는 메시지는?",sendString);
                     if(!sendString.equals("")){
                             messageSend messageSend = new messageSend();
                             messageSend.execute();
@@ -730,7 +704,6 @@ public class ChatingActivity extends AppCompatActivity {
             if(s!=null){
                 getChattingUserJSON = s;
                 getChattingUserJSONData();
-                Log.e("s가 뭘까",s);
             }
         }
 
@@ -749,7 +722,6 @@ public class ChatingActivity extends AppCompatActivity {
                 conn.connect();
 
                 String token = "token="+chatToken;
-                Log.e("채팅토큰",chatToken+"");
 
                 OutputStream outputStream = conn.getOutputStream();
                 outputStream.write(token.getBytes("UTF-8"));
@@ -780,7 +752,6 @@ public class ChatingActivity extends AppCompatActivity {
 
             }catch (Exception e){
 
-                Log.e("ChattingActivity","Exception : " + e);
                 return null;
             }
         }
@@ -799,7 +770,6 @@ public class ChatingActivity extends AppCompatActivity {
                 JSONObject item = jsonArray.getJSONObject(i);
 
                 String id = item.getString("id");
-                Log.e("JSON으로 가져온 유저 아이디",id);
 
                 NavigationDrawerItem user = new NavigationDrawerItem(id);
                 navigationItems.add(user);
@@ -807,7 +777,6 @@ public class ChatingActivity extends AppCompatActivity {
             navigationAdapter.notifyDataSetChanged();
 
         }catch (JSONException e){
-            Log.e("ChattingActivity","JSONException : "+ e);
         }
     }
 
@@ -870,7 +839,6 @@ public class ChatingActivity extends AppCompatActivity {
                 return sb.toString().trim();
             }catch (Exception e){
 
-                Log.e("ChattingActivity","Exception : " + e);
                 return null;
             }
 
@@ -883,7 +851,6 @@ public class ChatingActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
 
-            Log.e("messageSend",chatToken+">"+roomTitle+">"+userID+">"+sendString);
             sendWriter.println(chatToken+">"+roomTitle+">"+userID+">"+sendString);
             sendWriter.flush();
 
@@ -896,26 +863,12 @@ public class ChatingActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
             sendString = params[0];
-            Log.e("뭐가 널인데 ","chatToken = " + chatToken + "roomTitle = " + roomTitle + " userID = " + userID + "sendString = " +sendString);
             sendWriter.println(chatToken+">"+roomTitle+">"+userID+">"+sendString+">"+params[1]);
             sendWriter.flush();
 
             return null;
         }
     }
-
-    //나가기 메시지 보내기
-
-//    private class exitMessageSend extends AsyncTask<String, Void, String>{
-//
-//        @Override
-//        protected String doInBackground(String... params) {
-//
-//            sendWriter.println("exit");
-//            sendWriter.flush();
-//            return null;
-//        }
-//    }
 
     private class socketGet extends AsyncTask<String,Void,String>{
         @Override
@@ -964,7 +917,6 @@ public class ChatingActivity extends AppCompatActivity {
 
         private Socket r_socket;
         private TextView tv;
-//        private String receiveString;
 
         Handler handler;
 
@@ -989,10 +941,6 @@ public class ChatingActivity extends AppCompatActivity {
                 if(r_socket != null){
 
                 BufferedReader br = new BufferedReader(new InputStreamReader(r_socket.getInputStream()));
-
-                Log.e("리시브스레드","ㅁㄴㅇㄹ");
-                    Log.e("가져오나욧",userRoomList.size()+"");
-
                 while(true){
 
                     receiveMsg = br.readLine();
@@ -1003,13 +951,11 @@ public class ChatingActivity extends AppCompatActivity {
                     receiveUserID = receiveUser[2];
                     receiveMsg = receiveUser[3];
                     if(receiveUser.length == 5){
-                        Log.e("여기 널아니야","asdf");
                         receiveServer = receiveUser[4];
                     }
                     //받아온 메시지가 자기 자신 것인지 다른 유저 것인지 판단하는 로직
                     if(receiveUserID.equals(userID)){
 
-                        // 17/09/22 핸들러 수정 시도
                         if(receiveUser.length==5){
                             //입장,퇴장 멘트
                             if(receiveServer.equals("enter")){
@@ -1022,7 +968,6 @@ public class ChatingActivity extends AppCompatActivity {
 
                         } else {
                             if(receiveMsg.contains("http://115.71.232.155")){
-                                // 17/09/28 이미지 전송 수정한 부분
 
                                 Message msg = handler.obtainMessage(5,receiveMsg);
                                 handler.sendMessage(msg);
@@ -1035,7 +980,6 @@ public class ChatingActivity extends AppCompatActivity {
 
                     } else {
 
-                        // 17/09/22 핸들러 수정 시도
 
                         otherUser = receiveUserID;
                         if(userRoomList.contains(String.valueOf(receiveToken))){
@@ -1049,7 +993,6 @@ public class ChatingActivity extends AppCompatActivity {
                                 }
                             } else {
 
-                                // 17/09/28 이미지 전송 수정한 부분
                                 if(receiveMsg.contains("http://115.71.232.155")){
                                     Message msg = handler.obtainMessage(6,receiveMsg);
                                     handler.sendMessage(msg);
@@ -1060,7 +1003,6 @@ public class ChatingActivity extends AppCompatActivity {
 
                             }
                         }
-                        //수정 사항 끝
                     }
 
                 }
@@ -1103,7 +1045,6 @@ public class ChatingActivity extends AppCompatActivity {
                 //채팅방에 참여하고 있는 인원 리스트뷰에 저장
                 getChattingRoomUser getRoomUser = new getChattingRoomUser();
                 getRoomUser.execute();
-                Log.e("여기 들어왔어요 대장","ㅁㄴㅇㄹ");
             }
         }
 
