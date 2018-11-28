@@ -208,16 +208,6 @@ public class JoinActivity extends AppCompatActivity {
                     String memberBirth = birth.getText().toString();
                     join.execute(memberID,memberPwd,memberEmail,memberBirth);
                 }
-//                if(!idConfirm.getText().toString().equals("이미 사용하고 있는 ID입니다.") && pwdConfirm.getText().toString().equals("비밀번호가 일치합니다.")
-//                        && !emailConfirm.getText().toString().equals("이메일 형식이 맞지 않습니다.")){
-//                    joinMember join = new joinMember();
-//                    String memberID = id.getText().toString();
-//                    String memberPwd = pwd.getText().toString();
-//                    String memberEmail = email.getText().toString();
-//                    String memberBirth = birth.getText().toString();
-//                    join.execute(memberID,memberPwd,memberEmail,memberBirth);
-//                }
-
             }
         });
 
@@ -270,7 +260,6 @@ public class JoinActivity extends AppCompatActivity {
                 conn.setReadTimeout(5000);
                 conn.setDoInput(true);
                 conn.connect();
-                Log.e("들어옴","들어옴");
 
                 OutputStream outputStream = conn.getOutputStream();
                 outputStream.write(id.getBytes("UTF-8"));
