@@ -114,7 +114,6 @@ public class MusicGenreActivityAdapter extends BaseAdapter {
                             helper.delete(db,items.get(position).getTitle());
                             helper.insert(db,items.get(position).getTitle(),items.get(position).getArtist(),items.get(position).getAlbumImg(),items.get(position).getMusicURL(),items.get(position).getLyrics(), items.get(position).getAlbumName(),items.get(position).getDate(),items.get(position).getGenre());
                             Toast.makeText(finalConvertView.getContext(), "중복되는 곡을 삭제하고 재생합니다.", Toast.LENGTH_SHORT).show();
-                            Log.e("테스트테스트테스트","들어옴 들어옴!");
                             Log.e("mainNewMusic","title ? " + items.get(position).getTitle());
                             Log.e("mainNewMusic","artist ? " + items.get(position).getArtist());
                             Log.e("mainNewMusic","albumImg ? " + items.get(position).getAlbumImg());
