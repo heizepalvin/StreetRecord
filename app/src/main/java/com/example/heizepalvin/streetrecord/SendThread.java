@@ -30,29 +30,10 @@ public class SendThread extends Thread{
 
             String sendString = et.getText().toString();
 
-            Log.e("샌드스트링",sendString);
-//            Log.e("도대체 뭔데 ", m_socket.getOutputStream() + "");
-//            while(true){
-
-
-//                if(sendString.equals("exit")){
-//                    break;
-//                }
-
-//                Log.e("sendString",sendString);
-
-//                bufferedWriter.write(sendString);
-//                bufferedWriter.flush();
                     if(!sendString.equals("")){
                         sendWriter.println(sendString);
                         sendWriter.flush();
                     }
-//            }
-
-//            sendWriter.close();
-//            s_threadBoolean = false;
-//            bufferedWriter.close();
-//            m_socket.close();
         }catch(Exception e){
             e.printStackTrace();
 
