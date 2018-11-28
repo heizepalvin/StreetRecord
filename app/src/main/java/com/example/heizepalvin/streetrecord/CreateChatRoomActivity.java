@@ -177,7 +177,6 @@ public class CreateChatRoomActivity extends AppCompatActivity {
                     startActivityForResult(i,CROP_FROM_IMAGE);
 
                 }
-//                startActivityForResult(intent, CROP_FROM_IMAGE); // CROP_FROM_IMAGE case문으로 이동
 
                 break;
             }
@@ -187,15 +186,8 @@ public class CreateChatRoomActivity extends AppCompatActivity {
               try{
                   Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),mImageCaptureUri);
                   Bitmap thumbImage = ThumbnailUtils.extractThumbnail(bitmap, 200, 200);
-//                  ByteArrayOutputStream bs = new ByteArrayOutputStream();
-//                  thumbImage.compress(Bitmap.CompressFormat.JPEG, 100, bs); // 이미지가 클 경우 OutOfMemoryException 발생이 예상되어 압축
-
-//                  Glide.with(this).load(bs.toByteArray()).asBitmap().into(createRoomImg);
                   createRoomImg.setImageBitmap(thumbImage);
                   getApplicationContext().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(tempFile)));
-
-                  Log.e("크롭파일",croppedFileName.getName());
-
               }catch (Exception e){
                   Log.e("ERROR", e.getMessage());
               }
@@ -207,8 +199,6 @@ public class CreateChatRoomActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_chatroom_activity);
-
-//        checkPermissions();
 
         createTitle = (EditText) findViewById(R.id.createChatActTitle);
         titleCount = (TextView) findViewById(R.id.createChatActTitleCount);
@@ -249,13 +239,11 @@ public class CreateChatRoomActivity extends AppCompatActivity {
                     genreCount.setVisibility(View.VISIBLE);
 
                     userSelectGenre = (String) parent.getItemAtPosition(position);
-                    Log.e("선택한 장르",userSelectGenre);
                 } else {
                     createGenre.setVisibility(View.GONE);
                     genreCount.setVisibility(View.GONE);
 
                     userSelectGenre = (String) parent.getItemAtPosition(position);
-                    Log.e("선택한 장르",userSelectGenre);
                 }
             }
 
@@ -304,11 +292,7 @@ public class CreateChatRoomActivity extends AppCompatActivity {
                     String formatDate = formatNow.format(date);
 
                     createChatRoom create = new createChatRoom();
-                    Log.e("무슨 장르이냐 ", userSelectGenre);
                     create.execute(createTitle.getText().toString(), createGenre.getText().toString(),formatDate);
-                    Log.e("방만들기 여기에 들어가나","직접입력 이다 ");
-
-
 
                     if(tempFile!=null){
                         uploadImage uploadImage = new uploadImage();
@@ -321,22 +305,8 @@ public class CreateChatRoomActivity extends AppCompatActivity {
                     Date date = new Date(now);
                     SimpleDateFormat formatNow = new SimpleDateFormat("yy/MM/dd HH:mm:ss");
                     String formatDate = formatNow.format(date);
-//
-//                    MusicChatItem item = new MusicChatItem(createTitle.getText().toString(),genreSelect.getSelectedItem().toString(),"1",date);
-//                    Log.e("채팅방몇개?",chatItems.size()+"");
-//                    chatItems.add(item);
-//                    Log.e("채팅방몇개?",chatItems.size()+"");
-//                    Intent intent = new Intent(CreateChatRoomActivity.this,MusicChatActivity.class);
-//                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                    startActivity(intent);
-//                    finish();
                     createChatRoom create = new createChatRoom();
-                    Log.e("무슨 장르이냐 ", userSelectGenre);
                     create.execute(createTitle.getText().toString(), userSelectGenre, formatDate);
-                    Log.e("방만들기 여기에 들어가나","직접입력 아님 ");
-
-
-
                     if(tempFile!=null){
                         uploadImage uploadImage = new uploadImage();
                         uploadImage.execute();
@@ -400,14 +370,12 @@ public class CreateChatRoomActivity extends AppCompatActivity {
 
                             createRoomImg.setImageResource(R.drawable.logos);
                             tempFile = null;
-//                            Toast.makeText(CreateChatRoomActivity.this, "세번째 선택 사진 삭제", Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
 
                         }
                         // 다이얼로그 닫기
                         else {
 
-//                            Toast.makeText(CreateChatRoomActivity.this, "네번째 선택 취소", Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
                         }
                     }
@@ -526,7 +494,6 @@ public class CreateChatRoomActivity extends AppCompatActivity {
             progressDialog.dismiss();
 
             if(s != null){
-                Log.e("결과",s);
                 String[] splitResult = s.split("/");
                 String toastResult = splitResult[0];
                 int token = Integer.parseInt(splitResult[1]);
@@ -639,9 +606,6 @@ public class CreateChatRoomActivity extends AppCompatActivity {
             String twoHyphens = "--";
             String boundary = "*****";
 
-            Log.e("크롭된이미지이름", String.valueOf(croppedFileName));
-
-//            if(!tempFile.equals(null)){
                 try{
 
                     FileInputStream fileInputStream = new FileInputStream(tempFile);
@@ -710,7 +674,6 @@ public class CreateChatRoomActivity extends AppCompatActivity {
 
                 }
 
-//            }
             return null;
 
         }
