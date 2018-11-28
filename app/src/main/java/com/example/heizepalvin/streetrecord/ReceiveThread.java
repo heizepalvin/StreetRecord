@@ -30,13 +30,11 @@ public class ReceiveThread extends Thread{
         try{
             BufferedReader br = new BufferedReader(new InputStreamReader(r_socket.getInputStream()));
 
-            Log.e("리씨브스레드","ㅁㄴㅇㄹ");
 
 
             while(true){
 
                 receiveString = br.readLine();
-                Log.e("receiveㅇㅇㅇ",receiveString);
 
             }
 
