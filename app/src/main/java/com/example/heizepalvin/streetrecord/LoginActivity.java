@@ -182,9 +182,6 @@ public class LoginActivity extends AppCompatActivity {
         facebookLogin.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Log.e("토큰",loginResult.getAccessToken().getToken());
-                Log.e("유저아이디",loginResult.getAccessToken().getUserId());
-                Log.e("퍼미션 리스트",loginResult.getAccessToken().getPermissions()+"");
                 GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
                     @Override
                     public void onCompleted(JSONObject object, GraphResponse response) {
@@ -194,24 +191,15 @@ public class LoginActivity extends AppCompatActivity {
                             editor.putBoolean("login",true);
                             editor.putString("userName",object.getString("name"));
                             editor.putString("token",object.getString("id"));
-                            Log.e("name",object.getString("name"));
-                            Log.e("user profile",object.toString());
-                            Log.e("user아이디",object.getString("id"));
                             if(!object.toString().contains("email")){
-                                Log.e("facebookLoginUserEmail","이메일이 없음");
                                 facebookParamsEmail = "null";
                             } else{
-                                Log.e("facebookLoginUserEmail","이메일이 있음");
-//                                editor.putString("userEmail",object.getString("email"));
                                 facebookParamsEmail = object.getString("email");
                             }
 
                             if(!object.toString().contains("birthday")){
-                                Log.e("facebookLoginUserBirthday","생년월일이 없음");
                                 facebookParamsBirth = "null";
                             } else {
-                                Log.e("facebookLoginUserBirthday","생년월일이 있음");
-//                                editor.putString("userBirthday",object.getString("birthday"));
                                 String birthSplit[] = object.getString("birthday").split("/");
                                 facebookParamsBirth = birthSplit[2] + birthSplit[0] + birthSplit[1];
                             }
@@ -221,10 +209,8 @@ public class LoginActivity extends AppCompatActivity {
                             if(!facebookLogin){
                                 memberLoginFaceBook fbLogin = new memberLoginFaceBook();
                                 fbLogin.execute(object.getString("name"),"Facebook",object.getString("id"));
-                                Log.e("페이스북로그인","페이스북로그인 false");
                             } else {
                                 Toast.makeText(LoginActivity.this, "페이스북으로 로그인 되었습니다.", Toast.LENGTH_SHORT).show();
-                                Log.e("페이스북로그인","페이스북로그인 true");
                             }
                             loginBoolean = true;
                             editor.commit();
@@ -329,13 +315,11 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onSuccess(UserProfile result) {
-                    Log.e("kakaoLogin","카카오로그인이에요123");
                     SharedPreferences pref = getSharedPreferences("login",MODE_PRIVATE);
                     SharedPreferences.Editor editor = pref.edit();
                     editor.putBoolean("login",true);
                     editor.putString("userName",result.getNickname());
                     editor.putString("token", String.valueOf(result.getId()));
-//                    editor.putString("userEmail",result.getEmail());
                     editor.putString("loginLink","KakaoTalk");
                     editor.commit();
                     SharedPreferences pref2 = getSharedPreferences("kakao",MODE_PRIVATE);
@@ -343,14 +327,9 @@ public class LoginActivity extends AppCompatActivity {
                     if(!kakaoLogin) {
                         memberLoginKakao kakaoLoginDB = new memberLoginKakao();
                         kakaoLoginDB.execute(result.getNickname(), result.getEmail(), "KAKAO", String.valueOf(result.getId()));
-                        Log.e("kakaoLogin","카카오로그인이에요");
                     } else {
                         Toast.makeText(LoginActivity.this, "카카오톡으로 로그인 되었습니다.", Toast.LENGTH_SHORT).show();
-                        Log.e("kakaoLogin","카카오로그인이에요2");
                     }
-                    Log.e("UserProfile", result.toString());
-                    Log.e("UserEmail", result.getEmail());
-                    Log.e("UserID", String.valueOf(result.getId()));
                     loginBoolean = true;
                     Intent intent = new Intent(LoginActivity.this,MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -534,7 +513,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 bufferedReader.close();
 
-                Log.e("카카오톡로그인연동",sb.toString().trim());
 
                 return sb.toString().trim();
 
