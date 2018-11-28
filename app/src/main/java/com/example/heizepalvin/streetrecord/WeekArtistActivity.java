@@ -242,7 +242,6 @@ public class WeekArtistActivity extends AppCompatActivity {
 
                     } catch (SQLiteException e){
                         e.printStackTrace();
-                        Log.e("NewMusicActDatabaseException","데이터베이스를 가져올 수 없음.");
                     }
                 } else {
                     Toast.makeText(WeekArtistActivity.this, "로그인을 해주세요.", Toast.LENGTH_SHORT).show();
@@ -495,22 +494,14 @@ public class WeekArtistActivity extends AppCompatActivity {
                 JSONObject item = jsonArray.getJSONObject(i);
 
                 String title = item.getString("title");
-                Log.e("WeekArtistMusic","title ? " + title);
                 String artist = item.getString("artist");
-                Log.e("WeekArtistMusic","artist ? " + artist);
                 String albumImg = item.getString("albumImg");
-                Log.e("WeekArtistMusic","albumImg ? " + albumImg);
                 String musicURL = item.getString("musicURL");
-                Log.e("WeekArtistMusic","musicURL ? " + musicURL);
                 String getLyrics = item.getString("lyrics");
                 String lyrics = getLyrics.replace("*","\n");
-                Log.e("WeekArtistMusic","lyrics ? " + lyrics);
                 String albumName = item.getString("albumName");
-                Log.e("WeekArtistMusic","albumName ? " + albumName);
                 String date = item.getString("date");
-                Log.e("WeekArtistMusic","date ? " + date);
                 String genre = item.getString("genre");
-                Log.e("WeekArtistMusic","genre ? " + genre);
 
                 WeekArtistItem music = new WeekArtistItem(title,artist,albumImg,musicURL,lyrics,albumName,date,genre);
 
