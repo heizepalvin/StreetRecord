@@ -103,17 +103,11 @@ public class NewMusicAdapter extends BaseAdapter {
                         int count = helper.search(db,items.get(position).getTitle());
                         if(count != 1){
                             helper.insert(db,items.get(position).getTitle(),items.get(position).getArtist(),items.get(position).getAlbumImg(),items.get(position).getMusicURL(),items.get(position).getLyrics(), items.get(position).getAlbumName(),items.get(position).getDate(),items.get(position).getGenre());
-                            Log.e("newMusicAct","title ? " + items.get(position).getTitle());
-                            Log.e("newMusicAct","artist ? " + items.get(position).getArtist());
-                            Log.e("newMusicAct","albumImg ? " + items.get(position).getAlbumImg());
                         } else {
                             helper.delete(db,items.get(position).getTitle());
                             helper.insert(db,items.get(position).getTitle(),items.get(position).getArtist(),items.get(position).getAlbumImg(),items.get(position).getMusicURL(),items.get(position).getLyrics(), items.get(position).getAlbumName(),items.get(position).getDate(),items.get(position).getGenre());
 
                             Toast.makeText(finalConvertView.getContext(), "중복되는 곡을 삭제하고 재생합니다.", Toast.LENGTH_SHORT).show();
-                            Log.e("newMusicAct","title ? " + items.get(position).getTitle());
-                            Log.e("newMusic","artist ? " + items.get(position).getArtist());
-                            Log.e("newMusic","albumImg ? " + items.get(position).getAlbumImg());
                         }
 
                         ArrayList<PlaylistItem> playlist = new ArrayList<PlaylistItem>();
