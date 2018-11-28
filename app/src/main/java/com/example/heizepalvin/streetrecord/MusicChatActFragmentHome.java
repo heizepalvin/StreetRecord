@@ -130,12 +130,10 @@ public class MusicChatActFragmentHome extends Fragment {
         jsonCount.clear();
         lastJsonData = 0;
         if(choiceFilter.equals("모든 채팅방")){
-            Log.e("필터","모든채팅방");
             getChatRoomCount getNotFilterRoom = new getChatRoomCount();
             getNotFilterRoom.execute();
             chattingsjsonBoolean = true;
         } else if(choiceFilter.equals("기타")){
-            Log.e("필터","기타");
 
             getFilterChatRoom filterRoom = new getFilterChatRoom();
             filterRoom.execute(choiceFilter);
@@ -143,7 +141,6 @@ public class MusicChatActFragmentHome extends Fragment {
             chattingsjsonBoolean = true;
 
         } else{
-            Log.e("필터","3번째");
 
             getFilterChatRoom filterRoom = new getFilterChatRoom();
             filterRoom.execute(choiceFilter);
@@ -162,26 +159,20 @@ public class MusicChatActFragmentHome extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Log.e("clear된나?",chatItems.size()+"");
                 chatItems.clear();
                 jsonCount.clear();
                 lastJsonData = 0;
                 if(choiceFilter.equals("모든 채팅방")){
-                    Log.e("필터","모든채팅방");
                     getChatRoomCount getNotFilterRoom = new getChatRoomCount();
                     getNotFilterRoom.execute();
                     chattingsjsonBoolean = true;
                 } else if(choiceFilter.equals("기타")){
-                    Log.e("필터","기타");
-
                     getFilterChatRoom filterRoom = new getFilterChatRoom();
                     filterRoom.execute(choiceFilter);
 
                     chattingsjsonBoolean = true;
 
                 } else{
-                    Log.e("필터","3번째");
-
                     getFilterChatRoom filterRoom = new getFilterChatRoom();
                     filterRoom.execute(choiceFilter);
 
@@ -230,7 +221,6 @@ public class MusicChatActFragmentHome extends Fragment {
 
                     choiceFilter = "모든 채팅방";
                     //분류하지않았을때 모든 채팅방 불러오기
-                    Log.e("채팅방분류","분류");
                     getChattingJsonData = null;
                     chatItems.clear();
                     jsonCount.clear();
@@ -255,7 +245,6 @@ public class MusicChatActFragmentHome extends Fragment {
                     filterSearch.setVisibility(View.GONE);
                     selectFilter = (String) parent.getItemAtPosition(position);
                     choiceFilter = selectFilter;
-                    Log.e("selectFilter는?",selectFilter);
                     //사용자가 선택한걸로 db에서 검색해서 가져오기
                     lastJsonData = 0;
                     getFilterChatRoom filterRoom = new getFilterChatRoom();
@@ -274,18 +263,6 @@ public class MusicChatActFragmentHome extends Fragment {
 
             }
         });
-
-
-
-        // 채팅방 db에서 불러오기
-//        chatItems.clear();
-//        getChatRoomCount count = new getChatRoomCount();
-//        count.execute();
-
-        //불러오기 끝
-
-
-        Log.e("채팅방몇개?",chatItems.size()+"");
 
         return layout;
     }
@@ -309,12 +286,10 @@ public class MusicChatActFragmentHome extends Fragment {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-//            Log.e(" 결과좀보여주세요",s);
             getChattingJsonData = s;
             chatItems.clear();
             jsonCount.clear();
             getChattingJson();
-            Log.e("혹시 여기?","ㅁㄴㅇㄹ");
         }
 
         @Override
@@ -384,8 +359,6 @@ public class MusicChatActFragmentHome extends Fragment {
 
             if(s!=null){
                 roomCount = Integer.parseInt(s);
-                Log.e("룸카",roomCount+"");
-//                Toast.makeText(getApplicationContext(), s , Toast.LENGTH_SHORT).show();
                 getChattingRoom chattingRoom = new getChattingRoom();
                 chattingRoom.execute();
             }
@@ -460,7 +433,6 @@ public class MusicChatActFragmentHome extends Fragment {
 
                 getChattingJsonData = s;
                 getChattingJson();
-                Log.e("여기도 거치니?","ㅁㄴㅇㄹ");
             }
         }
 
@@ -486,12 +458,6 @@ public class MusicChatActFragmentHome extends Fragment {
                 outputStream.flush();
                 outputStream.close();
                 lastJsonData = lastJsonData+10;
-
-
-
-
-                Log.e("라스트제이슨데이타 뭐냐 ?" ,lastJsonData+"");
-
 
                 int responseCode = conn.getResponseCode();
 
@@ -554,7 +520,6 @@ public class MusicChatActFragmentHome extends Fragment {
                 conn.setConnectTimeout(5000);
                 conn.setReadTimeout(5000);
                 conn.connect();
-                Log.e("token ?",Integer.valueOf(params[0])+"");
                 String token = "token="+Integer.valueOf(params[0]);
 
                 OutputStream outputStream = conn.getOutputStream();
@@ -599,7 +564,6 @@ public class MusicChatActFragmentHome extends Fragment {
     private void getChattingJson() {
 
         if (chattingsjsonBoolean) {
-//            Log.e("여긴 안거쳐?",getChattingJsonData);
             try {
                 JSONObject jsonObject = new JSONObject(getChattingJsonData);
                 final JSONArray jsonArray = jsonObject.getJSONArray("chattingData");
@@ -612,17 +576,14 @@ public class MusicChatActFragmentHome extends Fragment {
                 deleteList = new ArrayList<>();
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject item = jsonArray.getJSONObject(i);
-                    Log.e("여긴 들어와?","ㅁㄴㅇㄹ");
                     //로컬데이터베이스에 있는 채팅방 목록을 불러와서 그 목록을 제외하고 화면에 뿌려준다.
                     int memberCount = item.getInt("memberCount");
                     if(memberCount==0){
                         deleteList.add(item.getInt("num"));
-                        Log.e("델리트리스트",deleteList.size()+"");
                         deleteChattingRoom deleteRoom = new deleteChattingRoom();
                         deleteRoom.execute(String.valueOf(item.getInt("num")));
                         continue;
                     }
-                    Log.e("localToken",cursor.getCount()+" ? ? " + num + " ? ?");
                     if(cursor.getCount() != 0){
                         for(int j = 0; j<cursor.getCount(); j++) {
                             cursor.moveToPosition(j);
@@ -642,17 +603,11 @@ public class MusicChatActFragmentHome extends Fragment {
                         num = item.getInt("num");
                     }
                     String title = item.getString("title");
-                    Log.e("title?", title);
                     String genre = item.getString("genre");
-//                    Log.e("genre?",genre);
                     String date = item.getString("date");
-//                    Log.e("date?",date);
                     SimpleDateFormat transFormat = new SimpleDateFormat("yy/MM/dd HH:mm:ss");
                     Date parseDate = transFormat.parse(date);
-
-//                    Log.e("memberCount?", String.valueOf(memberCount));
                     String image = item.getString("image");
-//                    Log.e("image?", image);
 
                     if (!image.equals("null")) {
                         MusicChatItem list = new MusicChatItem(title, genre, memberCount, parseDate, image, num);
@@ -680,46 +635,10 @@ public class MusicChatActFragmentHome extends Fragment {
                     readJsonData = true;
 
                 } else {
-                    Log.e("갱신되고있어요", "ㅁㄴㅇㄹ");
                     recyclerView.getAdapter().notifyDataSetChanged();
                 }
 
-
-                Log.e("roomCount", String.valueOf(roomCount));
-
                 jsonCount.add(lastJsonData);
-                Log.e("제이슨카운트", jsonCount.size() + "");
-                Log.e("쳇아이템사이즈", chatItems.size() + "");
-
-                //9주차때 수정
-//                recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//
-//                    @Override
-//                    public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                        super.onScrollStateChanged(recyclerView, newState);
-//                        int lastVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
-//
-//                        Log.e("둘다", lastJsonData + " 라스트" + chatItems.size() + " 사이즈");
-//                        if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastVisibleItemPosition == chatItems.size() - 1) {
-//                            if (lastJsonData >= chatItems.size()) {
-//                                if (!jsonCount.isEmpty()) {
-//                                    Log.e("여기들어와 제발", "플리즈");
-//                                    Log.e("아이템사이즈", chatItems.size() + "");
-//                                    Log.e("아이템사이즈", lastJsonData + "");
-//                                    if (jsonCount.get(0).equals(lastJsonData)) {
-//                                        if (lastJsonData < roomCount) {
-//                                            Log.e("들어가나?", "들어간다." + lastJsonData);
-//                                            getChattingRoom chattingRoom = new getChattingRoom();
-//                                            chattingRoom.execute();
-//                                            jsonCount.clear();
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//
-//                    }
-//                });
 
             } catch (JSONException e) {
                 Log.e("MusicChatFragmentHome", "JsonException : " + e);
@@ -734,7 +653,6 @@ public class MusicChatActFragmentHome extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-//        adapter.notifyDataSetChanged();
     }
 
 
