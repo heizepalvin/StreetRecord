@@ -83,9 +83,6 @@ public class MusicChatActivity extends AppCompatActivity {
                     case R.id.action_two:
                         vp.setCurrentItem(1);
                         return true;
-//                    case R.id.action_three:
-//                        vp.setCurrentItem(2);
-//                        return true;
                 }
                 return false;
             }
@@ -142,8 +139,6 @@ public class MusicChatActivity extends AppCompatActivity {
                     return new MusicChatActFragmentHome();
                 case 1:
                     return new MusicChatActFragmentRoomList();
-//                case 2:
-//                    return new MusicChatActFragmentFriendList();
                 default:
                     return null;
             }
@@ -156,7 +151,6 @@ public class MusicChatActivity extends AppCompatActivity {
 
         @Override
         public int getItemPosition(Object object) {
-                Log.e("여긴 몇번감","ㅁㄴㅇㄹ");
 
             if(object instanceof MusicChatActFragmentRoomList){
                 return POSITION_NONE;
@@ -172,7 +166,6 @@ public class MusicChatActivity extends AppCompatActivity {
             try{
                 super.finishUpdate(container);
             } catch (NullPointerException nullPointerException){
-                Log.e("MusicChatActivity","Catch the NullPointerException in FragmentPagerAdapter.finishUpdate");
             }
         }
     }
