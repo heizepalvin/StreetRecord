@@ -49,7 +49,6 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
         switch (focusChange){
 
             case AudioManager.AUDIOFOCUS_GAIN:
-                Log.e("오디오포커스","GAIN");
                 if(lossTransient){
                     if(!mediaPlayer.isPlaying()){
                         mediaPlayer.start();
@@ -61,14 +60,13 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
                 mediaPlayer.setVolume(1.0f,1.0f);
                 break;
             case AudioManager.AUDIOFOCUS_LOSS:
-                Log.e("오디오포커스","LOSS");
+            
                 pause();
                 sendBroadcast(new Intent(BroadcastActions.PLAY_STATE_CHANGED));
 //                updateNotificationPlayer();
                 removeNotificationPlayer();
                 break;
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-                Log.e("오디오포커스","LOSS_TRANSIENT");
                 if(mediaPlayer.isPlaying()){
                     pause();
                     updateNotificationPlayer();
@@ -77,7 +75,6 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
                 }
                 break;
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-                Log.e("오디오포커스","LOSS_TRANSIENT_CAN_DUCK");
                 if(mediaPlayer.isPlaying()){
                     mediaPlayer.setVolume(0.1f,0.1f);
                 }
@@ -100,12 +97,10 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
                 int state = intent.getIntExtra("state",-1);
                 switch (state){
                     case 0:
-                        Log.e("헤드폰", String.valueOf(state) + " 헤드셋 빠짐");
                         GlobalApplication.getInstance().getServiceInterface().pause();
                         removeNotificationPlayer();
                         break;
                     case 1:
-                        Log.e("헤드폰", String.valueOf(state) + " 헤드셋 껴짐");
                         break;
                 }
             }
@@ -128,14 +123,12 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
 
         registerBroadcast();
 
-        Log.e("서비스 들어오나?","서비스");
         items = new ArrayList<>();
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-                Log.e("setOnPreparedListener","지금들어옴");
                 isPrepared = true;
                 mp.start();
                 SharedPreferences repeatOne = getSharedPreferences("repeat",MODE_PRIVATE);
@@ -153,7 +146,6 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
                 } else {
                     sendBroadcast(new Intent(BroadcastActions.PREPARED));
                     sendBroadcast(new Intent(BroadcastActions.isPlaying));
-                    Log.e("프리페어 마지막","ㅁㄴㅇㄹ");
                     updateNotificationPlayer();
                 }
             }
@@ -163,7 +155,6 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
             @Override
             public void onCompletion(MediaPlayer mp) {
                 isPrepared = false;
-                Log.e("컴플리트","컴플리트");
                 sendBroadcast(new Intent(BroadcastActions.NEXT));
                 SharedPreferences preferences = getSharedPreferences("repeat",MODE_PRIVATE);
                 String repeat = preferences.getString("repeat","off");
@@ -204,7 +195,6 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
                 isPrepared = false;
-                Log.e("에러리스너","에러리스너");
                 mp.reset();
                 rewind();
                 sendBroadcast(new Intent(BroadcastActions.PLAY_STATE_CHANGED));
@@ -220,9 +210,7 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
         int result = audioManager.requestAudioFocus(this,AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
 
         if(result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED){
-            Log.e("오디오포커스result","REQUEST_GRANTED");
         } else if(result == AudioManager.AUDIOFOCUS_REQUEST_FAILED){
-            Log.e("오디오포커스result","REQUEST_FAILED");
         }
 
 //        mediaPlayer.setLooping(false);
@@ -283,7 +271,6 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
             mediaPlayer.release();
             mediaPlayer = null;
             unregisterBroadcast();
-            Log.e("여기가 들어오는건지?","오디오서비스디스트로이");
         }
     }
 
@@ -293,7 +280,6 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
     }
 
     private PlaylistItem queryAudioItem (int position){
-        Log.e("queryAudioItem","쿼리오디오아이템");
         currentPosition = position;
         String title = items.get(currentPosition).getTitle();
         String artist = items.get(currentPosition).getArtist();
@@ -311,7 +297,6 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
     }
 
     private void prepare(PlaylistItem item){
-        Log.e("prepare이다","프리페어");
         try{
             String url = item.getMusicURL();
             String urlEncoder = URLEncoder.encode(url,"UTF-8");
@@ -331,7 +316,6 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
     }
 
     public void setPlaylist(ArrayList<PlaylistItem> item){
-        Log.e("setPlaylist","셋플레이리스트");
         if(!items.equals(item)){
             items.clear();
             items.addAll(item);
@@ -372,7 +356,6 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
 
     public void play(int position){
 
-        Log.e("play 너냐?","??");
         mediaPlayer.reset();
         PlaylistItem getItem  = queryAudioItem(position);
         prepare(getItem);
@@ -383,7 +366,6 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
 
     public void pause(){
         if(isPrepared){
-            Log.e("펄스 오디오","펄스");
             mediaPlayer.pause();
             sendBroadcast(new Intent(BroadcastActions.PLAY_STATE_CHANGED));
             updateNotificationPlayer();
@@ -408,7 +390,6 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
     }
 
     public void forward(){
-        Log.e("forward아이템사이즈",items.size() + "");
         SharedPreferences preferences = getSharedPreferences("repeat",MODE_PRIVATE);
         String repeat = preferences.getString("repeat","off");
         if(repeat.equals("on")){
@@ -429,7 +410,6 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
             }
         }
 
-        Log.e("forward 너냐?",currentPosition + "");
 //        mediaPlayer.reset();
     }
 
@@ -453,7 +433,6 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
     public void forwardRandom(){
         Random random = new Random();
         int randomPlayPosition = random.nextInt(items.size());
-        Log.e("랜덤포지션","randomPosition = " + randomPlayPosition);
         if(randomPlayPosition == currentPosition){
             int randomRePlayPosition = random.nextInt(items.size());
             play(randomRePlayPosition);
@@ -487,7 +466,6 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
     public void repeatOne(){
         if(mediaPlayer != null){
            mediaPlayer.setLooping(true);
-            Log.e("repeatOne","리피트원");
 //            allRepeat = false;
 //            oneRepeat = true;
         }
@@ -496,7 +474,6 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
     public void repeatOff(){
         if(mediaPlayer != null){
             mediaPlayer.setLooping(false);
-            Log.e("repeatOff","리피트오프");
 //            allRepeat = false;
 //            oneRepeat = false;
         }
@@ -507,7 +484,6 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
             mediaPlayer.setLooping(false);
 //            allRepeat = true;
 //            oneRepeat = false;
-            Log.e("repeatAll","리피트올");
         }
     }
 
