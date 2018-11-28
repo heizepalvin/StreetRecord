@@ -78,19 +78,15 @@ public class PlayActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
 
             if(intent.getAction().equals("NEXT")) {
-                Log.e("playActivity", "next에 들어옴");
                 updateUI();
             } else if(intent.getAction().equals("TRUE")){
-                Log.e("playActivity", "true에 들어옴");
                 updateProgress();
                 updateUI();
             } else if(intent.getAction().equals("REPEATOFF")){
-                Log.e("playActivity", "repeatoff에 들어옴");
                 updateProgress();
                 updateUI();
             } else {
                 updateUI();
-                Log.e("playActivity","나머지에 들어옴");
             }
 
         }
@@ -149,7 +145,6 @@ public class PlayActivity extends AppCompatActivity {
                 Intent intent = new Intent(PlayActivity.this,PlaylistActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
-//                finish();
             }
         });
 
@@ -231,7 +226,6 @@ public class PlayActivity extends AppCompatActivity {
         randomOn = (ImageView) findViewById(R.id.playActRandomOn);
         randomOff = (ImageView) findViewById(R.id.playActRandomOff);
 
-        Log.e("repeatMode","repeatMode = " + repeatMode);
 
         repeatOff.setOnClickListener(new View.OnClickListener() {
             @Override
