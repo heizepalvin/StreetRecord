@@ -55,9 +55,6 @@ public class MainActivity extends AppCompatActivity {
     private MainMusicGenreAdapter mainMusicGenreAdapter;
     private NewMusicRecyclerAdapter newMusicRecyclerAdapter;
 
-//    private ArrayList<SituationMusicItem> situationMusicData;
-//    private SituationMusicAdapter situationMusicAdapter;
-
     //DB연동 변수
     private static String TAG = "musicChart";
     private static final String TAG_JSON = "musicChart";
@@ -73,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     //mainWeekList db연동
-//    String todayMusicJson;
     String mainWeekJson;
 
     String mainWeekImage;
@@ -109,28 +105,16 @@ public class MainActivity extends AppCompatActivity {
         if(!GlobalApplication.getInstance().getServiceInterface().isPlaying()){
             GlobalApplication.getInstance().getServiceInterface().getRemoveNotificationPlayer();
         }
-        Log.e("여기가 들어오는건지?","메인디스트로이");
 
     }
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e("리시브", intent.getAction());
-            Log.e("HEADSET_PLUG", String.valueOf(intent.getIntExtra("state",0)));
-//            if(intent.getAction().equals("NEXT")){
-//                GlobalApplication.getInstance().getServiceInterface().forward();
-//                updateUI();
-//            } else if(intent.getAction().equals("TRUE")) {
-//                updateUI();
-//            } else {
-//                updateUI();
-//            }
             if(intent.getAction().equals("NEXT")){
                 SharedPreferences randomPlay = getSharedPreferences("random",MODE_PRIVATE);
                 Boolean random = randomPlay.getBoolean("random",false);
                 if(random){
-                    Log.e("NEXTRANDOM","ㅁㄴㅇㄹ");
                     updateUI();
                 }   else {
                     GlobalApplication.getInstance().getServiceInterface().forward();
@@ -141,12 +125,10 @@ public class MainActivity extends AppCompatActivity {
                 int state = intent.getIntExtra("state",-1);
                 switch (state){
                     case 0:
-                        Log.e("헤드폰", String.valueOf(state) + " 헤드셋 빠짐");
                         SharedPreferences preferences = getSharedPreferences("PlugOn",MODE_PRIVATE);
                         Boolean plug = preferences.getBoolean("plugOn",false);
                         if(plug){
                             GlobalApplication.getInstance().getServiceInterface().pause();
-                            Log.e("17/09/27","여기때매 그런건가?");
                             updateUI();
                             SharedPreferences.Editor editor = preferences.edit();
                             editor.clear();
@@ -154,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                         break;
                     case 1:
-                        Log.e("헤드폰", String.valueOf(state) + " 헤드셋 껴짐");
                         SharedPreferences pref = getSharedPreferences("plugOn",MODE_PRIVATE);
                         SharedPreferences.Editor editor = pref.edit();
                         editor.putBoolean("plugOn",true);
@@ -197,25 +178,10 @@ public class MainActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         setContentView(R.layout.activity_main);
 
-
-        //  17/9/19 채팅 리시브 서비스 시작
-
         Intent intent = new Intent(MainActivity.this,ChattingService.class);
         startService(intent);
 
         boolean service = isServiceRunningCheck();
-
-        Log.e("서비스가 돌고있나",service+"");
-
-
-//        SharedPreferences preferences12 = getSharedPreferences("facebook",MODE_PRIVATE);
-//        SharedPreferences preferences13 = getSharedPreferences("kakao",MODE_PRIVATE);
-//        SharedPreferences.Editor editor12 = preferences12.edit();
-//        SharedPreferences.Editor editor13 = preferences13.edit();
-//        editor12.clear();
-//        editor13.clear();
-//        editor12.commit();
-//        editor13.commit();
 
         Stetho.initializeWithDefaults(this);
 
@@ -378,7 +344,6 @@ public class MainActivity extends AppCompatActivity {
                 loginBoolean = false;
                 if(GlobalApplication.getInstance().getServiceInterface().isPlaying()){
                     GlobalApplication.getInstance().getServiceInterface().stop();
-                    Log.e("여기들어와요 로그아웃할때","ㅁㄴㅇㄹ");
                     updateUI();
                     GlobalApplication.getInstance().getServiceInterface().getRemoveNotificationPlayer();
                 }
@@ -500,10 +465,6 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(mBroadcastReceiver);
     }
 
-//    private void updateButton(){
-//        mainControlPlay.setImageResource(R.drawable.pause);
-//    }
-
     private void updateUI(){
 
         if(GlobalApplication.getInstance().getServiceInterface().isPlaying()){
@@ -552,7 +513,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
 
-            Log.e("rmstn","두번째 asyncTask");
 
             String serverURL = params[0];
 
@@ -611,24 +571,15 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject item = jsonArray.getJSONObject(i);
 
                 String title = item.getString("title");
-                Log.e(TAG,"title ? "+title);
                 String artist = item.getString("artist");
-                Log.e(TAG,"artist ? "+artist);
                 String rank = item.getString("rank");
-                Log.e(TAG,"rank ? "+rank);
                 String albumImg = item.getString("albumImg");
-                Log.e(TAG,"albumImg ? "+albumImg);
                 String musicURL = item.getString("musicURL");
-                Log.e(TAG,"musicURL ? " + musicURL);
                 String getLyrics = item.getString("lyrics");
                 String lyrics = getLyrics.replace("*","\n");
-//                Log.e(TAG,"lyrics ? " + lyrics);
                 String albumName = item.getString("albumName");
-                Log.e(TAG,"albumName ? " + albumName);
                 String date = item.getString("date");
-                Log.e(TAG,"date ? " + date);
                 String genre = item.getString("genre");
-                Log.e(TAG,"genre ? " + genre);
 
                 TopMusicItem top = new TopMusicItem(rank,title,artist,albumImg,musicURL,lyrics,albumName,date,genre);
                 topMusicData.add(top);
@@ -685,9 +636,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
 
-            Log.e("rmstn","첫번째 asyncTask");
-
-
             String serverURL = params[0];
 
             try{
@@ -700,7 +648,6 @@ public class MainActivity extends AppCompatActivity {
                 conn.connect();
 
                 int responseStatusCode = conn.getResponseCode();
-                Log.d("palvin","response code = " + responseStatusCode);
 
                 InputStream inputStream;
                 if(responseStatusCode == conn.HTTP_OK){
@@ -742,11 +689,8 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject item = jsonArray.getJSONObject(i);
 
                 String title = item.getString("title");
-                Log.e("syllowa","title ? "+title);
                 String artist = item.getString("artist");
-                Log.e("syllowa","artist ? "+artist);
                 String albumImg = item.getString("albumImg");
-                Log.e("syllowa","albumImg ? "+albumImg);
                 String musicURL = item.getString("musicURL");
                 String lyrics = item.getString("lyrics");
                 String albumName = item.getString("albumName");
@@ -800,9 +744,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
 
-            Log.e("rmstn","네번째 asyncTask");
-
-
             String serverURL = params[0];
 
             try{
@@ -841,7 +782,6 @@ public class MainActivity extends AppCompatActivity {
 
             } catch (Exception e){
 
-                Log.d("mainWeekList","InsertData : Error ",e);
                 return null;
 
             }
@@ -860,13 +800,9 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject item = jsonArray.getJSONObject(i);
 
                 mainWeekName = item.getString("name");
-                Log.e("mainWeek","name ? " + mainWeekName);
                 mainWeekSong = item.getString("song");
-                Log.e("mainWeek","song ? " + mainWeekSong);
                 mainWeekImage = item.getString("image");
-                Log.e("mainWeek","image ? " + mainWeekImage);
                 mainWeekContent = item.getString("content");
-                Log.e("mainWeek","content ? "+ mainWeekContent);
             }
 
             ImageView img = (ImageView) findViewById(R.id.mainWeekImg);
@@ -886,7 +822,6 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this,WeekArtistActivity.class);
                     intent.putExtra("image",mainWeekImage);
                     intent.putExtra("name",mainWeekName);
-//            intent.putExtra("song",mainWeekSong);
                     intent.putExtra("content",mainWeekContent);
                     startActivity(intent);
                 }
@@ -928,9 +863,6 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-
-            Log.e("rmstn","세번째 asyncTask");
-
 
             String serverURL = params[0];
 
