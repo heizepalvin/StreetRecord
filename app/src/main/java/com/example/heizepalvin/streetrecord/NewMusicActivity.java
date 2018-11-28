@@ -344,7 +344,6 @@ public class NewMusicActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unregisterBroadcast();
-        Log.e("여기가 들어오는건지?","뉴뮤직디스트로이");
     }
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -494,22 +493,14 @@ public class NewMusicActivity extends AppCompatActivity {
                 JSONObject item = jsonArray.getJSONObject(i);
 
                 String title = item.getString("title");
-                Log.e("newMusicActivity","title ? " + title);
                 String artist = item.getString("artist");
-                Log.e("newMusicActivity","artist ? "+ artist);
                 String albumImg = item.getString("albumImg");
-                Log.e("newMusicActivity","albumImg ? " + albumImg);
                 String musicURL = item.getString("musicURL");
-                Log.e("newMusicActivity","musicURL ? " + musicURL);
                 String getLyrics = item.getString("lyrics");
                 String lyrics = getLyrics.replace("*","\n");
-                Log.e("newMusicActivity","lyrics ? " + lyrics);
                 String albumName = item.getString("albumName");
-                Log.e("newMusicActivity","albumName ? " + albumName);
                 String date = item.getString("date");
-                Log.e("newMusicActivity","date ? " + date);
                 String genre = item.getString("genre");
-                Log.e("newMusicActivity","genre ? " + genre);
 
                 NewMusicListItem list = new NewMusicListItem(title,artist,albumImg,musicURL,lyrics,albumName,date,genre);
                 items.add(list);
