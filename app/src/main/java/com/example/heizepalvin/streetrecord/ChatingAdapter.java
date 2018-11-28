@@ -72,7 +72,6 @@ public class ChatingAdapter extends BaseAdapter {
 
         ViewHolder holder;
 
-//        if(convertView == null){
             convertView = inflater.inflate(layout,parent,false);
 
             holder = new ViewHolder();
@@ -84,11 +83,6 @@ public class ChatingAdapter extends BaseAdapter {
             holder.chatItemRightTime = (TextView) convertView.findViewById(R.id.chatItemRightTime);
             holder.chatItemUserID = (TextView) convertView.findViewById(R.id.chatItemUser);
             holder.chatItemImage = (ImageView) convertView.findViewById(R.id.chatItemImage);
-
-//            convertView.setTag(holder);
-//        } else {
-//            holder = (ViewHolder) convertView.getTag();
-//        }
 
         //이것은 받은 메시지 표시
         if(items.get(position).getType().equals("1")){
@@ -109,7 +103,6 @@ public class ChatingAdapter extends BaseAdapter {
                 holder.chatData.setText(items.get(position).getUserChat());
                 holder.chatItemUserID.setText(items.get(position).getId());
                 holder.chatItemRightTime.setText(items.get(position).getTime());
-                Log.e("시간이뭘까",items.get(position).getTime());
                 holder.chatData.setBackgroundResource(R.drawable.inbox2);
                 holder.chatItemLayout.setGravity(Gravity.LEFT);
                 holder.chatItemLeftTime.setVisibility(View.GONE);
@@ -137,7 +130,6 @@ public class ChatingAdapter extends BaseAdapter {
                 holder.chatData.setText(items.get(position).getUserChat());
                 holder.chatItemUserID.setVisibility(View.GONE);
                 holder.chatItemLeftTime.setText(items.get(position).getTime());
-                Log.e("시간이뭘까",items.get(position).getTime());
                 holder.chatData.setBackgroundResource(R.drawable.outbox2);
                 holder.chatItemLayout.setGravity(Gravity.RIGHT);
                 holder.chatItemRightTime.setVisibility(View.GONE);
