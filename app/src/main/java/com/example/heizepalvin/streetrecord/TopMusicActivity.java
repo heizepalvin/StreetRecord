@@ -477,24 +477,15 @@ public class TopMusicActivity extends AppCompatActivity {
                 JSONObject item = jsonArray.getJSONObject(i);
 
                 String title = item.getString("title");
-                Log.e("topMusicActivity","title ? " + title);
                 String artist = item.getString("artist");
-                Log.e("topMusicActivity","artist ? " + artist);
                 String rank = item.getString("rank");
-                Log.e("topMusicActivity","rank ? " + rank);
                 String albumImg = item.getString("albumImg");
-                Log.e("topMusicActivity","albumImg ? "+ albumImg);
                 String musicURL = item.getString("musicURL");
-                Log.e("topMusicActivity","musicURL ? " + musicURL);
                 String getLyrics = item.getString("lyrics");
                 String lyrics = getLyrics.replace("*","\n");
-                Log.e("topMusicActivity","lyrics ? " + lyrics);
                 String albumName = item.getString("albumName");
-                Log.e("topMusicActivity","albumName ? " + albumName);
                 String date = item.getString("date");
-                Log.e("topMusicActivity","date ? " + date);
                 String genre = item.getString("genre");
-                Log.e("topMusicActivity","genre ? " + genre);
 
                 TopMusicItem items = new TopMusicItem(rank,title,artist,albumImg,musicURL,lyrics,albumName,date,genre);
                 musicChart.add(items);
