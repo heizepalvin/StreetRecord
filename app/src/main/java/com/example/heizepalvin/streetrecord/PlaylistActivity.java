@@ -81,8 +81,6 @@ public class PlaylistActivity extends AppCompatActivity implements PlaylistAdpat
 
         playlistItems = new ArrayList<>();
 
-//        Stetho.initializeWithDefaults(this);
-
         helper = new PlaylistDatabase(PlaylistActivity.this,"playlist",null,version);
         db = helper.getWritableDatabase();
         helper.select(db,"playlist",playlistItems);
@@ -99,7 +97,6 @@ public class PlaylistActivity extends AppCompatActivity implements PlaylistAdpat
         playlist.scrollToPosition(GlobalApplication.getInstance().getServiceInterface().getCurrentPosition());
         adapter.notifyDataSetChanged();
 
-        Log.e("플레이리스트 개수 ", playlistItems.size()+ "");
 
         //재생목록 x 버튼
 
@@ -156,24 +153,15 @@ public class PlaylistActivity extends AppCompatActivity implements PlaylistAdpat
                                 int selectRemove = Integer.parseInt(seleteList.get(i));
                                 Log.e("selectRemove", selectRemove + "?");
                                 if (playlistItems.size() <= selectRemove) {
-                                    Log.e("여기들어오는경우?", "ㅁㄴㅇㄹ");
-                                    Log.e("아이템 갯수전", playlistItems.size() + "?");
                                     String itemTitle = playlistItems.get(playlistItems.size()-1).getTitle();
-                                    Log.e("아이템타이틀",itemTitle);
                                     playlistItems.remove(playlistItems.size()-1);
                                     helper.delete(db,itemTitle,playlistItems);
-                                    Log.e("아이템 갯수후", playlistItems.size() + "?");
                                 } else {
-                                    Log.e("아이템 갯수전", playlistItems.size() + "?");
                                     String itemTitle = playlistItems.get(selectRemove).getTitle();
-                                    Log.e("아이템타이틀",itemTitle);
                                     playlistItems.remove(selectRemove);
                                     helper.delete(db,itemTitle,playlistItems);
-                                    Log.e("아이템 갯수후", playlistItems.size() + "?");
                                 }
 
-                                Log.e("selectRemove", selectRemove + "?");
-                                Log.e("아이템개수", adapter.getItemCount() + "?");
                                 String selectDelete = seleteList.get(i);
                                 seleteList.remove(selectDelete);
                                 playlist.getAdapter().notifyDataSetChanged();
@@ -347,7 +335,6 @@ public class PlaylistActivity extends AppCompatActivity implements PlaylistAdpat
     public void onStartDrag(PlaylistViewHolder holder) {
         if(insertMode){
             touchHelper.startDrag(holder);
-            Log.e("onStartDrag","onStartDrag");
         }
     }
 
@@ -363,6 +350,5 @@ public class PlaylistActivity extends AppCompatActivity implements PlaylistAdpat
     @Override
     protected void onResume() {
         super.onResume();
-//        adapter.notifyDataSetChanged();
     }
 }
